@@ -1,5 +1,4 @@
 import express from 'express';
-import { ethers } from 'ethers';
 
 const app = express();
 const PORT = 3000;
