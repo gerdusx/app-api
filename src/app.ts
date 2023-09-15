@@ -26,7 +26,7 @@ mongoose.connect(mongo_uri).then(() => {
 });
 
 const app = express();
-const PORT = 3400;
+const PORT = 3000;
 // cache.put('foo', 'bar');
 
 const graphqlEndpoint = 'https://data.staging.arkiver.net/gerdusx/reaperv2/graphql';
