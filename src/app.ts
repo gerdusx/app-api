@@ -2,6 +2,10 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import Vault from './models/Vault';
+import { gqlquery } from './queries/query';
+var cache = require('memory-cache');
+const axios = require('axios');
+import cron from 'node-cron';
 
 dotenv.config();
 
@@ -22,11 +26,16 @@ mongoose.connect(mongo_uri).then(() => {
 });
 
 const app = express();
-const PORT = 3000;
+const PORT = 3400;
+// cache.put('foo', 'bar');
+
+const graphqlEndpoint = 'https://data.staging.arkiver.net/gerdusx/reaperv2/graphql';
 
 app.get('/', (req, res) => {
-    res.send('Hello, TypeScript with Express!');
-});
+    setTimeout(() => {
+      res.render('index', { title: 'Hey', message: 'Hello there', date: new Date()})
+    }, 5000) //setTimeout was used to simulate a slow processing request
+  })
 
 app.get('/api/vaults', async (req, res) => {
     try {
@@ -34,6 +43,96 @@ app.get('/api/vaults', async (req, res) => {
         res.json(vaults);
     } catch (error) {
         res.status(500).send('Server Error');
+    }
+});
+
+app.get('/api/vaults2', async (req, res) => {
+    try {
+        const vaultsRes = cache.get('vaults');
+        console.log("vaults", vaultsRes);
+        if (!vaultsRes) {
+            const vaults = await Vault.find();
+            cache.put('vaults', vaults);
+            const resp = {
+                source: "api",
+                data: vaults
+            }
+            res.json(resp)
+        } else {
+            const resp = {
+                source: "cache",
+                data: vaultsRes
+            }
+            res.json(resp);
+        }
+        //const vaults = await Vault.find();
+        
+    } catch (error) {
+        res.status(500).send('Server Error');
+    }
+});
+
+app.get('/api/arkiver/data', async (req, res) => {
+    try {
+        const dataCache = cache.get('data');
+        if (!dataCache || Date.now() > dataCache.expires) {
+
+            const response = await axios.post(graphqlEndpoint, {
+                query: gqlquery
+            });
+
+            const expirationTimestamp = Date.now() + 600000; // Set to expire in 30 seconds
+            const lastFetch = Date.now();
+
+            cache.put('data', {
+                data: response.data.data,
+                expires: expirationTimestamp,
+                lastFetch
+            });
+
+            const resp = {
+                source: "api",
+                data: response.data.data,
+                expires: expirationTimestamp,
+                lastFetch
+            }
+
+            res.json(resp);
+        } else {
+            console.log("dataCache.lastFetch", dataCache.lastFetch)
+            console.log("dataCache.expirationTimestamp", dataCache.expires)
+            const resp = {
+                source: "cache",
+                data: dataCache.data,
+                expires: dataCache.expires,
+                lastFetch: dataCache.lastFetch
+            }
+            res.json(resp);
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch data from GraphQL server.' });
+    }
+});
+
+cron.schedule('*/5 * * * *', async () => {
+    try {
+        const response = await axios.post(graphqlEndpoint, {
+            query: gqlquery
+        });
+
+        const expirationTimestamp = Date.now() + 600000; // Set to expire in 30 seconds
+        const lastFetch = Date.now();
+
+        cache.put('data', {
+            data: response.data.data,
+            expires: expirationTimestamp,
+            lastFetch
+        });
+
+        console.log('Data refreshed from GraphQL server.');
+
+    } catch (error) {
+        console.error('Failed to fetch data from GraphQL server.', error);
     }
 });
 
