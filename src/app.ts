@@ -6,6 +6,7 @@ import { gqlquery } from './queries/query';
 var cache = require('memory-cache');
 const axios = require('axios');
 import cron from 'node-cron';
+const cors = require('cors');
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ mongoose.connect(mongo_uri).then(() => {
 });
 
 const app = express();
+app.use(cors());
 const PORT = 3000;
 // cache.put('foo', 'bar');
 
