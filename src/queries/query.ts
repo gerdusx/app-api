@@ -51,6 +51,7 @@ export const gqlquery = `
             reportDate
             strategyAddress
             vaultAddress
+            chainId
           }
         Users {
             _id

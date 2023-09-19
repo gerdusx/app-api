@@ -31,7 +31,7 @@ app.use(cors());
 const PORT = 3000;
 // cache.put('foo', 'bar');
 
-const graphqlEndpoint = 'https://data.staging.arkiver.net/gerdusx/reaperv2/graphql';
+const graphqlEndpoint = 'https://data.staging.arkiver.net/gerdusx/reaperv3/graphql';
 
 app.get('/', (req, res) => {
     setTimeout(() => {
