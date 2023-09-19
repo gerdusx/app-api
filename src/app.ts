@@ -39,36 +39,26 @@ app.get('/', (req, res) => {
     }, 5000) //setTimeout was used to simulate a slow processing request
   })
 
+// app.get('/api/vaults', async (req, res) => {
+//     try {
+//         const vaults = await Vault.find();
+//         res.json(vaults);
+//     } catch (error) {
+//         res.status(500).send('Server Error');
+//     }
+// });
+
 app.get('/api/vaults', async (req, res) => {
     try {
-        const vaults = await Vault.find();
-        res.json(vaults);
-    } catch (error) {
-        res.status(500).send('Server Error');
-    }
-});
-
-app.get('/api/vaults2', async (req, res) => {
-    try {
         const vaultsRes = cache.get('vaults');
-        console.log("vaults", vaultsRes);
         if (!vaultsRes) {
             const vaults = await Vault.find();
             cache.put('vaults', vaults);
-            const resp = {
-                source: "api",
-                data: vaults
-            }
-            res.json(resp)
+
+            res.json(vaults)
         } else {
-            const resp = {
-                source: "cache",
-                data: vaultsRes
-            }
-            res.json(resp);
-        }
-        //const vaults = await Vault.find();
-        
+            res.json(vaultsRes);
+        }       
     } catch (error) {
         res.status(500).send('Server Error');
     }
@@ -118,6 +108,9 @@ app.get('/api/arkiver/data', async (req, res) => {
 
 cron.schedule('*/5 * * * *', async () => {
     try {
+        const vaults = await Vault.find();
+        cache.put('vaults', vaults);
+        
         const response = await axios.post(graphqlEndpoint, {
             query: gqlquery
         });
