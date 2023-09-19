@@ -6,6 +6,7 @@ import { gqlquery } from './queries/query';
 var cache = require('memory-cache');
 const axios = require('axios');
 import cron from 'node-cron';
+import Token from './models/Token';
 const cors = require('cors');
 
 dotenv.config();
@@ -64,6 +65,22 @@ app.get('/api/vaults', async (req, res) => {
     }
 });
 
+app.get('/api/tokens', async (req, res) => {
+    try {
+        const tokensRes = cache.get('tokens');
+        if (!tokensRes) {
+            const tokens = await Token.find();
+            cache.put('tokens', tokens);
+
+            res.json(tokens)
+        } else {
+            res.json(tokensRes);
+        }       
+    } catch (error) {
+        res.status(500).send('Server Error');
+    }
+});
+
 app.get('/api/arkiver/data', async (req, res) => {
     try {
         const dataCache = cache.get('data');
@@ -110,7 +127,10 @@ cron.schedule('*/5 * * * *', async () => {
     try {
         const vaults = await Vault.find();
         cache.put('vaults', vaults);
-        
+
+        const tokens = await Token.find();
+        cache.put('tokens', tokens);
+
         const response = await axios.post(graphqlEndpoint, {
             query: gqlquery
         });
