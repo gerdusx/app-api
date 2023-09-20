@@ -70,9 +70,21 @@ app.get('/api/tokens', async (req, res) => {
         const tokensRes = cache.get('tokens');
         if (!tokensRes) {
             const tokens = await Token.find();
-            cache.put('tokens', tokens);
+            
+            const coinIds = tokens.map(token => token.coinId).join(",");
+            let coinGeckoQuery = `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd`;
+            const coinsResponse = await axios.get(coinGeckoQuery);
+            const updatedTokens = tokens.map(token => {
+                const usdValue = token.coinId ? coinsResponse.data[token.coinId]?.usd : 0;
+                return {
+                    ...token.toObject(),
+                    usd: usdValue
+                }
+            })
+            
+            cache.put('tokens', updatedTokens);
 
-            res.json(tokens)
+            res.json(updatedTokens)
         } else {
             res.json(tokensRes);
         }       
@@ -129,7 +141,18 @@ cron.schedule('*/5 * * * *', async () => {
         cache.put('vaults', vaults);
 
         const tokens = await Token.find();
-        cache.put('tokens', tokens);
+        const coinIds = tokens.map(token => token.coinId).join(",");
+        let coinGeckoQuery = `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd`;
+        const coinsResponse = await axios.get(coinGeckoQuery);
+        const updatedTokens = tokens.map(token => {
+            const usdValue = token.coinId ? coinsResponse.data[token.coinId]?.usd : 0;
+            return {
+                ...token.toObject(),
+                usd: usdValue
+            }
+        })
+        
+        cache.put('tokens', updatedTokens);
 
         const response = await axios.post(graphqlEndpoint, {
             query: gqlquery
