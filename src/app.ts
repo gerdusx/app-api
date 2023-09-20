@@ -189,7 +189,7 @@ app.get('/api/arkiver/data', async (req, res) => {
     }
 });
 
-cron.schedule('*/1 * * * *', async () => {
+cron.schedule('*/5 * * * *', async () => {
     try {
         const dbVaults = await Vault.find();
         cache.put('vaults', dbVaults);
