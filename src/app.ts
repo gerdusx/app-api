@@ -143,7 +143,7 @@ app.get('/api/arkiver/data', async (req, res) => {
 
                 return {
                     ...snapshot,
-                    usd: usdValues
+                    usd: usdValues.usd
                 }
             });
 
@@ -236,7 +236,7 @@ cron.schedule('*/5 * * * *', async () => {
 
             return {
                 ...snapshot,
-                usd: usdValues
+                usd: usdValues.usd
             }
         });
 
