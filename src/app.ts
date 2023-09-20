@@ -7,6 +7,7 @@ var cache = require('memory-cache');
 const axios = require('axios');
 import cron from 'node-cron';
 import Token from './models/Token';
+import { ethers } from 'ethers';
 const cors = require('cors');
 
 dotenv.config();
@@ -36,9 +37,9 @@ const graphqlEndpoint = 'https://data.staging.arkiver.net/gerdusx/reaperv3/graph
 
 app.get('/', (req, res) => {
     setTimeout(() => {
-      res.render('index', { title: 'Hey', message: 'Hello there', date: new Date()})
+        res.render('index', { title: 'Hey', message: 'Hello there', date: new Date() })
     }, 5000) //setTimeout was used to simulate a slow processing request
-  })
+})
 
 // app.get('/api/vaults', async (req, res) => {
 //     try {
@@ -59,7 +60,7 @@ app.get('/api/vaults', async (req, res) => {
             res.json(vaults)
         } else {
             res.json(vaultsRes);
-        }       
+        }
     } catch (error) {
         res.status(500).send('Server Error');
     }
@@ -70,7 +71,7 @@ app.get('/api/tokens', async (req, res) => {
         const tokensRes = cache.get('tokens');
         if (!tokensRes) {
             const tokens = await Token.find();
-            
+
             const coinIds = tokens.map(token => token.coinId).join(",");
             let coinGeckoQuery = `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd`;
             const coinsResponse = await axios.get(coinGeckoQuery);
@@ -81,13 +82,13 @@ app.get('/api/tokens', async (req, res) => {
                     usd: usdValue
                 }
             })
-            
+
             cache.put('tokens', updatedTokens);
 
             res.json(updatedTokens)
         } else {
             res.json(tokensRes);
-        }       
+        }
     } catch (error) {
         res.status(500).send('Server Error');
     }
@@ -105,15 +106,68 @@ app.get('/api/arkiver/data', async (req, res) => {
             const expirationTimestamp = Date.now() + 600000; // Set to expire in 30 seconds
             const lastFetch = Date.now();
 
+            const dbVaults = await Vault.find();
+            const tokens = await Token.find();
+            const coinIds = tokens.map(token => token.coinId).join(",");
+            let coinGeckoQuery = `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd`;
+            const coinsResponse = (await axios.get(coinGeckoQuery)).data;
+            const updatedTokens = tokens.map(token => {
+                const usdValue = token.coinId ? coinsResponse[token.coinId]?.usd : 0;
+                return {
+                    ...token.toObject(),
+                    usd: usdValue
+                }
+            })
+
+            const vaults = response.data.data.Vaults.filter((vault: any) =>
+                dbVaults.some(dbVault =>
+                    vault.address.toLowerCase() === dbVault.address?.toLowerCase() && vault.chain.chainId === dbVault.chainId
+                ));
+
+            const snapshots = response.data.data.VaultSnapshots.map((snapshot: any) => {
+
+                const vault = vaults.find((x: any) => x.address.toLowerCase() === snapshot.vaultAddress.toLowerCase());
+                const reaperToken = updatedTokens.find((x: any) => x.address.toLowerCase() === vault?.token?.toLowerCase());
+
+                let usdValues = {
+                    usd: {
+                        tvl: 0
+                    }
+                }
+
+                if (reaperToken) {
+                    const totalAllocatedUnits = ethers.formatUnits(snapshot.totalAllocated, vault.decimals);
+                    const totalIdleUnits = ethers.formatUnits(snapshot.totalIdle, vault.decimals);
+
+                    const balance = Number(totalAllocatedUnits) + Number(totalIdleUnits);
+                    usdValues.usd.tvl = balance * reaperToken.usd;
+                }
+
+                return {
+                    ...snapshot,
+                    usd: usdValues
+                }
+            });
+
+            const data = {
+                Chains: response.data.data.Chains,
+                Users: response.data.data.Users,
+                Strategys: response.data.data.Strategys,
+                Vaults: vaults,
+                VaultSnapshots: snapshots,
+                StrategyReports: response.data.data.StrategyReports,
+                VaultTransactions: response.data.data.VaultTransactions
+            }
+
             cache.put('data', {
-                data: response.data.data,
+                data,
                 expires: expirationTimestamp,
                 lastFetch
             });
 
             const resp = {
                 source: "api",
-                data: response.data.data,
+                data,
                 expires: expirationTimestamp,
                 lastFetch
             }
@@ -135,34 +189,74 @@ app.get('/api/arkiver/data', async (req, res) => {
     }
 });
 
-cron.schedule('*/5 * * * *', async () => {
+cron.schedule('*/1 * * * *', async () => {
     try {
-        const vaults = await Vault.find();
-        cache.put('vaults', vaults);
+        const dbVaults = await Vault.find();
+        cache.put('vaults', dbVaults);
 
         const tokens = await Token.find();
         const coinIds = tokens.map(token => token.coinId).join(",");
         let coinGeckoQuery = `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd`;
-        const coinsResponse = await axios.get(coinGeckoQuery);
+        const coinsResponse = (await axios.get(coinGeckoQuery)).data;
         const updatedTokens = tokens.map(token => {
-            const usdValue = token.coinId ? coinsResponse.data[token.coinId]?.usd : 0;
+            const usdValue = token.coinId ? coinsResponse[token.coinId]?.usd : 0;
             return {
                 ...token.toObject(),
                 usd: usdValue
             }
         })
-        
+
         cache.put('tokens', updatedTokens);
 
         const response = await axios.post(graphqlEndpoint, {
             query: gqlquery
         });
 
+        const vaults = response.data.data.Vaults.filter((vault: any) =>
+            dbVaults.some(dbVault =>
+                vault.address.toLowerCase() === dbVault.address?.toLowerCase() && vault.chain.chainId === dbVault.chainId
+            ));
+
+        const snapshots = response.data.data.VaultSnapshots.map((snapshot: any) => {
+
+            const vault = vaults.find((x: any) => x.address.toLowerCase() === snapshot.vaultAddress.toLowerCase());
+            const reaperToken = updatedTokens.find((x: any) => x.address.toLowerCase() === vault?.token?.toLowerCase());
+
+            let usdValues = {
+                usd: {
+                    tvl: 0
+                }
+            }
+
+            if (reaperToken) {
+                const totalAllocatedUnits = ethers.formatUnits(snapshot.totalAllocated, vault.decimals);
+                const totalIdleUnits = ethers.formatUnits(snapshot.totalIdle, vault.decimals);
+
+                const balance = Number(totalAllocatedUnits) + Number(totalIdleUnits);
+                usdValues.usd.tvl = balance * reaperToken.usd;
+            }
+
+            return {
+                ...snapshot,
+                usd: usdValues
+            }
+        });
+
+        const data = {
+            Chains: response.data.data.Chains,
+            Users: response.data.data.Users,
+            Strategys: response.data.data.Strategys,
+            Vaults: vaults,
+            VaultSnapshots: snapshots,
+            StrategyReports: response.data.data.StrategyReports,
+            VaultTransactions: response.data.data.VaultTransactions
+        }
+
         const expirationTimestamp = Date.now() + 600000; // Set to expire in 30 seconds
         const lastFetch = Date.now();
 
         cache.put('data', {
-            data: response.data.data,
+            data,
             expires: expirationTimestamp,
             lastFetch
         });
