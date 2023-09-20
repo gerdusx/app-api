@@ -36,9 +36,7 @@ const PORT = 3000;
 const graphqlEndpoint = 'https://data.staging.arkiver.net/gerdusx/reaperv3/graphql';
 
 app.get('/', (req, res) => {
-    setTimeout(() => {
-        res.render('index', { title: 'Hey', message: 'Hello there', date: new Date() })
-    }, 5000) //setTimeout was used to simulate a slow processing request
+    res.json("home");
 })
 
 // app.get('/api/vaults', async (req, res) => {
@@ -195,7 +193,7 @@ cron.schedule('*/5 * * * *', async () => {
         cache.put('vaults', dbVaults);
 
         const tokens = await Token.find();
-        const coinIds = tokens.map(token => token.coinId).join(",");
+        const coinIds: string = tokens.map(token => token.coinId).join(",");
         let coinGeckoQuery = `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd`;
         const coinsResponse = (await axios.get(coinGeckoQuery)).data;
         const updatedTokens = tokens.map(token => {
