@@ -1,0 +1,18 @@
+[
+  {
+    "_id": "650c26e71dd50549905938e9",
+    "chainId": 10,
+    "__v": 0,
+    "blocksToFetch": 2500,
+    "latestBlock": 109928761,
+    "handler": "event"
+  },
+  {
+    "_id": "650d96200ed9da4c1747fc9c",
+    "chainId": 10,
+    "blocksToFetch": 1000,
+    "latestBlock": 97393540,
+    "handler": "block",
+    "blockInterval": 200
+  }
+]

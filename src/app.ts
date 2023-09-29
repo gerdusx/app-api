@@ -1,268 +1,90 @@
 import express from 'express';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import Vault from './models/Vault';
-import { gqlquery } from './queries/query';
-var cache = require('memory-cache');
-const axios = require('axios');
 import cron from 'node-cron';
-import Token from './models/Token';
-import { ethers } from 'ethers';
+var cache = require('memory-cache');
 const cors = require('cors');
 
-dotenv.config();
+import { connectToDb } from './db';
+import { fetchVaultsWithCache, fetchTokensWithCache, fetchArkiverDataWithCache, backup, restoreBackup, processEvents } from './utils';
+import { indexBlocks, indexEvents } from './indexer';
+import { BlockchainEvent, IBlockchainEvent } from './models/BlockchainEvent';
+import { eventMain } from './helpers/indexer/eventMain';
+import { fetchChains, fetchVaults } from './helpers/routeHandlers';
+import { updateApiCache } from './helpers/cacheHelper';
 
-let mongo_uri = process.env.MONGODB_URI;
-const mongo_password = process.env.MONGODB_PASSWORD;
-
-if (!mongo_uri) {
-    throw new Error('Please define the MONGODB_URI environment variable inside .env');
-}
-
-const encodedPassword = encodeURIComponent(mongo_password!);
-mongo_uri = mongo_uri.replace("password", encodedPassword);
-
-mongoose.connect(mongo_uri).then(() => {
-    console.log('Connected to MongoDB');
-}).catch(err => {
-    console.error('Error connecting to MongoDB', err);
-});
+// Connect to the database
+connectToDb();
 
 const app = express();
 app.use(cors());
-const PORT = 3000;
-// cache.put('foo', 'bar');
-
-const graphqlEndpoint = 'https://data.staging.arkiver.net/gerdusx/reaperv3/graphql';
+const PORT = 3010;
 
 app.get('/', (req, res) => {
     res.json("home");
-})
+});
 
-// app.get('/api/vaults', async (req, res) => {
-//     try {
-//         const vaults = await Vault.find();
-//         res.json(vaults);
-//     } catch (error) {
-//         res.status(500).send('Server Error');
-//     }
-// });
+app.get('/api/vaults', fetchVaultsWithCache);
+app.get('/api/tokens', fetchTokensWithCache);
+app.get('/api/arkiver/data', fetchArkiverDataWithCache);
+app.get('/api/backup', backup);
+app.get('/api/restorebackup', restoreBackup);
+app.get('/api/processevents', processEvents);
 
-app.get('/api/vaults', async (req, res) => {
+app.get('/api/dto/vaults', fetchVaults);
+app.get('/api/dto/chains', fetchChains);
+app.get('/api/dto/tokens', fetchTokensWithCache);
+
+
+
+// Indexing events every 10 seconds
+cron.schedule('*/4 * * * *', async () => {
     try {
-        const vaultsRes = cache.get('vaults');
-        if (!vaultsRes) {
-            const vaults = await Vault.find();
-            cache.put('vaults', vaults);
-
-            res.json(vaults)
-        } else {
-            res.json(vaultsRes);
-        }
+        const chainId = 10; // or whichever chainId you want to index
+        await indexEvents(chainId);
     } catch (error) {
-        res.status(500).send('Server Error');
+        console.error('Error in cron job:', error);
     }
 });
 
-app.get('/api/tokens', async (req, res) => {
+// Schedule the task to run every 5 seconds
+cron.schedule('*/10 * * * *', async () => {
     try {
-        const tokensRes = cache.get('tokens');
-        if (!tokensRes) {
-            const tokens = await Token.find();
-
-            const coinIds = tokens.map(token => token.coinId).join(",");
-            let coinGeckoQuery = `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd`;
-            const coinsResponse = await axios.get(coinGeckoQuery);
-            const updatedTokens = tokens.map(token => {
-                const usdValue = token.coinId ? coinsResponse.data[token.coinId]?.usd : 0;
-                return {
-                    ...token.toObject(),
-                    usd: usdValue
-                }
-            })
-
-            cache.put('tokens', updatedTokens);
-
-            res.json(updatedTokens)
-        } else {
-            res.json(tokensRes);
-        }
+        const chainId = 10; // or whichever chainId you want to index
+        await indexBlocks(chainId);
+        await updateApiCache();
     } catch (error) {
-        res.status(500).send('Server Error');
+        console.error('Error in cron job:', error);
     }
 });
 
-app.get('/api/arkiver/data', async (req, res) => {
-    try {
-        const dataCache = cache.get('data');
-        if (!dataCache || Date.now() > dataCache.expires) {
 
-            const response = await axios.post(graphqlEndpoint, {
-                query: gqlquery
-            });
-
-            const expirationTimestamp = Date.now() + 600000; // Set to expire in 30 seconds
-            const lastFetch = Date.now();
-
-            const dbVaults = await Vault.find();
-            const tokens = await Token.find();
-            const coinIds = tokens.map(token => token.coinId).join(",");
-            let coinGeckoQuery = `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd`;
-            const coinsResponse = (await axios.get(coinGeckoQuery)).data;
-            const updatedTokens = tokens.map(token => {
-                const usdValue = token.coinId ? coinsResponse[token.coinId]?.usd : 0;
-                return {
-                    ...token.toObject(),
-                    usd: usdValue
-                }
-            })
-
-            const vaults = response.data.data.Vaults.filter((vault: any) =>
-                dbVaults.some(dbVault =>
-                    vault.address.toLowerCase() === dbVault.address?.toLowerCase() && vault.chain.chainId === dbVault.chainId
-                ));
-
-            const snapshots = response.data.data.VaultSnapshots.map((snapshot: any) => {
-
-                const vault = vaults.find((x: any) => x.address.toLowerCase() === snapshot.vaultAddress.toLowerCase());
-                const reaperToken = updatedTokens.find((x: any) => x.address.toLowerCase() === vault?.token?.toLowerCase());
-
-                let usdValues = {
-                    usd: {
-                        tvl: 0
-                    }
-                }
-
-                if (reaperToken) {
-                    const totalAllocatedUnits = ethers.formatUnits(snapshot.totalAllocated, vault.decimals);
-                    const totalIdleUnits = ethers.formatUnits(snapshot.totalIdle, vault.decimals);
-
-                    const balance = Number(totalAllocatedUnits) + Number(totalIdleUnits);
-                    usdValues.usd.tvl = balance * reaperToken.usd;
-                }
-
-                return {
-                    ...snapshot,
-                    usd: usdValues.usd
-                }
-            });
-
-            const data = {
-                Chains: response.data.data.Chains,
-                Users: response.data.data.Users,
-                Strategys: response.data.data.Strategys,
-                Vaults: vaults,
-                VaultSnapshots: snapshots,
-                StrategyReports: response.data.data.StrategyReports,
-                VaultTransactions: response.data.data.VaultTransactions
-            }
-
-            cache.put('data', {
-                data,
-                expires: expirationTimestamp,
-                lastFetch
-            });
-
-            const resp = {
-                source: "api",
-                data,
-                expires: expirationTimestamp,
-                lastFetch
-            }
-
-            res.json(resp);
-        } else {
-            console.log("dataCache.lastFetch", dataCache.lastFetch)
-            console.log("dataCache.expirationTimestamp", dataCache.expires)
-            const resp = {
-                source: "cache",
-                data: dataCache.data,
-                expires: dataCache.expires,
-                lastFetch: dataCache.lastFetch
-            }
-            res.json(resp);
-        }
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch data from GraphQL server.' });
-    }
-});
-
+//Processing saved events every 5mins
 cron.schedule('*/5 * * * *', async () => {
     try {
-        const dbVaults = await Vault.find();
-        cache.put('vaults', dbVaults);
+        const reset = false;
+        if (reset) {
+            console.log("resetting...");
+            const result = await BlockchainEvent.updateMany({}, { $unset: { processed: 1 } });
+            console.log("resetting done");
+        } else {
+            
+            const newEvents: IBlockchainEvent[] = await BlockchainEvent.find({processed: { $exists: false }})
+            .sort({ blockTimestamp: 1, logIndex: 1 })
+            .limit(300)
+            .exec();
 
-        const tokens = await Token.find();
-        const coinIds: string = tokens.map(token => token.coinId).join(",");
-        let coinGeckoQuery = `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd`;
-        const coinsResponse = (await axios.get(coinGeckoQuery)).data;
-        const updatedTokens = tokens.map(token => {
-            const usdValue = token.coinId ? coinsResponse[token.coinId]?.usd : 0;
-            return {
-                ...token.toObject(),
-                usd: usdValue
-            }
-        })
-
-        cache.put('tokens', updatedTokens);
-
-        const response = await axios.post(graphqlEndpoint, {
-            query: gqlquery
-        });
-
-        const vaults = response.data.data.Vaults.filter((vault: any) =>
-            dbVaults.some(dbVault =>
-                vault.address.toLowerCase() === dbVault.address?.toLowerCase() && vault.chain.chainId === dbVault.chainId
-            ));
-
-        const snapshots = response.data.data.VaultSnapshots.map((snapshot: any) => {
-
-            const vault = vaults.find((x: any) => x.address.toLowerCase() === snapshot.vaultAddress.toLowerCase());
-            const reaperToken = updatedTokens.find((x: any) => x.address.toLowerCase() === vault?.token?.toLowerCase());
-
-            let usdValues = {
-                usd: {
-                    tvl: 0
+            console.log(`processing ${newEvents.length} new events...`, )
+    
+            for (let index = 0; index < newEvents.length; index++) {
+                const event = newEvents[index];
+    
+                if (event) {
+                    await eventMain(event);
+                    await updateApiCache();
                 }
             }
-
-            if (reaperToken) {
-                const totalAllocatedUnits = ethers.formatUnits(snapshot.totalAllocated, vault.decimals);
-                const totalIdleUnits = ethers.formatUnits(snapshot.totalIdle, vault.decimals);
-
-                const balance = Number(totalAllocatedUnits) + Number(totalIdleUnits);
-                usdValues.usd.tvl = balance * reaperToken.usd;
-            }
-
-            return {
-                ...snapshot,
-                usd: usdValues.usd
-            }
-        });
-
-        const data = {
-            Chains: response.data.data.Chains,
-            Users: response.data.data.Users,
-            Strategys: response.data.data.Strategys,
-            Vaults: vaults,
-            VaultSnapshots: snapshots,
-            StrategyReports: response.data.data.StrategyReports,
-            VaultTransactions: response.data.data.VaultTransactions
         }
-
-        const expirationTimestamp = Date.now() + 600000; // Set to expire in 30 seconds
-        const lastFetch = Date.now();
-
-        cache.put('data', {
-            data,
-            expires: expirationTimestamp,
-            lastFetch
-        });
-
-        console.log('Data refreshed from GraphQL server.');
-
     } catch (error) {
-        console.error('Failed to fetch data from GraphQL server.', error);
+        console.error('Error in cron job:', error);
     }
 });
 
