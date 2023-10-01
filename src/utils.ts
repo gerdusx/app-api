@@ -13,6 +13,9 @@ import { updateVaultSnapshotsTotalUsers, updateVaultsnapshots } from './helpers/
 import { eventMain } from './helpers/indexer/eventMain';
 import Strategy from './models/Strategy';
 import StrategyReport from './models/StrategyReport';
+import Chain from './models/Chain';
+import { EventType } from './models/EventType';
+import { User } from './models/User';
 const fs = require('fs');
 
 export const getUpdatedTokens = async () => {
@@ -172,17 +175,48 @@ export const fetchArkiverDataWithCache = async (req: Request, res: Response) => 
 
 export const backup = async (req: Request, res: Response) => {
     try {
-        const response = await axios.post(graphqlEndpoint, {
-            query: gqlquery
-        });
+        const events = await BlockchainEvent.find();
+        const chains = await Chain.find();
+        const eventtypes = await EventType.find();
+        const blocks = await ProcessedBlock.find();
+        const strategies = await Strategy.find();
+        const reports = await StrategyReport.find();
+        const tokens = await Token.find();
+        const users = await User.find();
+        const vaults = await Vault.find();
+        const snapshots = await VaultSnapshot.find();
 
+        const eventsJson = JSON.stringify(events, null, 2); 
+        fs.writeFileSync('backups/events.json', eventsJson);
 
-        //const data = await Vault.find();
+        const chainsJson = JSON.stringify(chains, null, 2); 
+        fs.writeFileSync('backups/chains.json', chainsJson);
 
-        const jsonData = JSON.stringify(response.data.data.Strategys, null, 2); // The "2" here formats the JSON with 2-space indentation
-        fs.writeFileSync('strategies.json', jsonData);
+        const eventtypesJson = JSON.stringify(eventtypes, null, 2); 
+        fs.writeFileSync('backups/eventtypes.json', eventtypesJson);
 
-        res.json(jsonData)
+        const blocksJson = JSON.stringify(blocks, null, 2); 
+        fs.writeFileSync('backups/blocks.json', blocksJson);
+
+        const strategiesJson = JSON.stringify(strategies, null, 2); 
+        fs.writeFileSync('backups/strategies.json', strategiesJson);
+
+        const reportsJson = JSON.stringify(reports, null, 2); 
+        fs.writeFileSync('backups/reports.json', reportsJson);
+
+        const tokensJson = JSON.stringify(tokens, null, 2); 
+        fs.writeFileSync('backups/tokens.json', tokensJson);
+
+        const usersJson = JSON.stringify(users, null, 2); 
+        fs.writeFileSync('backups/users.json', usersJson);
+
+        const vaultsJson = JSON.stringify(vaults, null, 2); 
+        fs.writeFileSync('backups/vaults.json', vaultsJson);
+
+        const snapshotsJson = JSON.stringify(snapshots, null, 2); 
+        fs.writeFileSync('backups/snapshots.json', snapshotsJson);
+
+        res.json("done")
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch data from GraphQL server.' });
     }
@@ -190,14 +224,46 @@ export const backup = async (req: Request, res: Response) => {
 
 export const restoreBackup = async (req: Request, res: Response) => {
     try {
-        // Read the JSON file
-        const jsonData = fs.readFileSync('strategyReports.json', 'utf8');
+        const eventsJson = fs.readFileSync('backups/events.json', 'utf8');
+        const events = JSON.parse(eventsJson);
+        await BlockchainEvent.insertMany(events);
 
-        // Parse the JSON string to an array of objects
-        const events = JSON.parse(jsonData);
+        const chainsJson = fs.readFileSync('backups/chains.json', 'utf8');
+        const chains = JSON.parse(chainsJson);
+        await Chain.insertMany(chains);
 
-        // Insert the documents into MongoDB
-        await StrategyReport.insertMany(events);
+        const eventtypesJson = fs.readFileSync('backups/eventtypes.json', 'utf8');
+        const eventtypes = JSON.parse(eventtypesJson);
+        await EventType.insertMany(eventtypes);
+
+        const blocksJson = fs.readFileSync('backups/blocks.json', 'utf8');
+        const blocks = JSON.parse(blocksJson);
+        await ProcessedBlock.insertMany(blocks);
+
+        const strategiesJson = fs.readFileSync('backups/strategies.json', 'utf8');
+        const strategies = JSON.parse(strategiesJson);
+        await Strategy.insertMany(strategies);
+
+        const reportsJson = fs.readFileSync('backups/reports.json', 'utf8');
+        const reports = JSON.parse(reportsJson);
+        await StrategyReport.insertMany(reports);
+
+        const tokensJson = fs.readFileSync('backups/tokens.json', 'utf8');
+        const tokens = JSON.parse(tokensJson);
+        await Token.insertMany(tokens);
+
+        const usersJson = fs.readFileSync('backups/users.json', 'utf8');
+        const users = JSON.parse(usersJson);
+        await User.insertMany(users);
+
+        const vaultsJson = fs.readFileSync('backups/vaults.json', 'utf8');
+        const vaults = JSON.parse(vaultsJson);
+        await Vault.insertMany(vaults);
+
+        const snapshotsJson = fs.readFileSync('backups/snapshots.json', 'utf8');
+        const snapshots = JSON.parse(snapshotsJson);
+        await VaultSnapshot.insertMany(snapshots);
+
 
         res.json({ message: 'Data restored successfully!' });
     } catch (error) {

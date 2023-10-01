@@ -1,0 +1,156 @@
+[
+  {
+    "_id": "64f8922492702d78fe7d1b3a",
+    "address": "0x963ffcd14D471E279245eE1570ad64ca78d8e67E",
+    "chainId": 250,
+    "startingBlock": 59733463,
+    "__v": 0
+  },
+  {
+    "_id": "64f892c392702d78fe7d1b3b",
+    "address": "0x3eE6107d9C93955acBb3f39871D32B02F82B78AB",
+    "chainId": 10,
+    "startingBlock": 106791915,
+    "__v": 0,
+    "asset": "0xc5b001DC33727F8F26880B184090D3E252470D45",
+    "constructionTime": 1689182607,
+    "dataFetched": true,
+    "decimals": 18,
+    "name": "Staked ERN",
+    "symbol": "stERN",
+    "token": "0xc5b001DC33727F8F26880B184090D3E252470D45"
+  },
+  {
+    "_id": "64f896b292702d78fe7d1b3c",
+    "address": "0xcecd29559A84e4d4F6467b36BbD4B9c3e6B89771",
+    "chainId": 10,
+    "startingBlock": 97393549,
+    "__v": 0,
+    "asset": "0x4200000000000000000000000000000000000042",
+    "constructionTime": 1683793497,
+    "dataFetched": true,
+    "decimals": 18,
+    "name": "OP Multi-Strategy",
+    "symbol": "rf-OP",
+    "token": "0x4200000000000000000000000000000000000042"
+  },
+  {
+    "_id": "64f896bb92702d78fe7d1b3d",
+    "address": "0x1bAd45E92DCe078Cf68C2141CD34f54A02c92806",
+    "chainId": 10,
+    "startingBlock": 97394355,
+    "__v": 0,
+    "asset": "0x4200000000000000000000000000000000000006",
+    "constructionTime": 1683793797,
+    "dataFetched": true,
+    "decimals": 18,
+    "name": "wETH Multi-Strategy",
+    "symbol": "rf-wETH",
+    "token": "0x4200000000000000000000000000000000000006"
+  },
+  {
+    "_id": "64f896c392702d78fe7d1b3e",
+    "address": "0xF6533b6fcB3F42D2fC91Da7C379858aE6Ebc7448",
+    "chainId": 10,
+    "startingBlock": 97394745,
+    "__v": 0,
+    "asset": "0x68f180fcCe6836688e9084f035309E29Bf0A2095",
+    "constructionTime": 1683793933,
+    "dataFetched": true,
+    "decimals": 8,
+    "name": "wBTC Multi-Strategy",
+    "symbol": "rf-wBTC",
+    "token": "0x68f180fcCe6836688e9084f035309E29Bf0A2095"
+  },
+  {
+    "_id": "64f896c992702d78fe7d1b3f",
+    "address": "0x508734b52BA7e04Ba068A2D4f67720Ac1f63dF47",
+    "chainId": 10,
+    "startingBlock": 97496555,
+    "__v": 0,
+    "asset": "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+    "constructionTime": 1683829107,
+    "dataFetched": true,
+    "decimals": 6,
+    "name": "USDC Multi-Strategy",
+    "symbol": "rf-USDC",
+    "token": "0x7F5c764cBc14f9669B88837ca1490cCa17c31607"
+  },
+  {
+    "_id": "64f896cf92702d78fe7d1b40",
+    "address": "0xc0F5DA4FB484CE6d8a6832819299F7cD0D15726E",
+    "chainId": 10,
+    "startingBlock": 97497800,
+    "__v": 0,
+    "asset": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+    "constructionTime": 1683829619,
+    "dataFetched": true,
+    "decimals": 18,
+    "name": "DAI Multi-Strategy",
+    "symbol": "rf-DAI",
+    "token": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1"
+  },
+  {
+    "_id": "64f896d892702d78fe7d1b41",
+    "address": "0x51868bb8b71FB423B87129908Fa039B880C8612d",
+    "chainId": 10,
+    "startingBlock": 97499674,
+    "__v": 0,
+    "asset": "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",
+    "constructionTime": 1683830538,
+    "dataFetched": true,
+    "decimals": 6,
+    "name": "USDT Multi-Strategy",
+    "symbol": "rf-USDT",
+    "token": "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58"
+  },
+  {
+    "_id": "64f896de92702d78fe7d1b42",
+    "address": "0xB19F4d65882F6C103C332F0BC012354548e9cE0e",
+    "chainId": 10,
+    "startingBlock": 97503633,
+    "__v": 0,
+    "asset": "0x1F32b1c2345538c0c6f582fCB022739c4A194Ebb",
+    "constructionTime": 1683832654,
+    "dataFetched": true,
+    "decimals": 18,
+    "name": "wstETH Multi-Strategy",
+    "symbol": "rf-wstETH",
+    "token": "0x1F32b1c2345538c0c6f582fCB022739c4A194Ebb"
+  },
+  {
+    "_id": "64f896e492702d78fe7d1b43",
+    "address": "0x253Eb67FcDFE60d1751acccD6d5A1a1B62baFC89",
+    "chainId": 42161,
+    "startingBlock": 103508051,
+    "__v": 0
+  },
+  {
+    "_id": "64f896ea92702d78fe7d1b44",
+    "address": "0x1364e70960e60A15Ca5a9214C338149f298AaCdE",
+    "chainId": 42161,
+    "startingBlock": 105861154,
+    "__v": 0
+  },
+  {
+    "_id": "64f896f292702d78fe7d1b45",
+    "address": "0x06B5f3dbf5f0483E533421cD7c48b28EA1CfED34",
+    "chainId": 42161,
+    "startingBlock": 103508429,
+    "__v": 0
+  },
+  {
+    "_id": "64f896fa92702d78fe7d1b46",
+    "address": "0x3E9d19c8fdeE09C7AeB9eFFEEf74CcF5131bCF58",
+    "chainId": 42161,
+    "startingBlock": 103508526,
+    "__v": 0
+  },
+  {
+    "_id": "64f8970092702d78fe7d1b47",
+    "address": "0x84A1f97Fd7585E93aefc97025FEb0e3ef3b54f60",
+    "chainId": 42161,
+    "startingBlock": 103509099,
+    "__v": 0
+  }
+]
