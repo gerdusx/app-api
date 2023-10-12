@@ -1,66 +1,66 @@
 [
   {
-    "_id": "6512b320c5dc3fe199a4fe74",
+    "_id": "6527981225913fcd7b0a58a8",
     "name": "RoleGranted",
     "__v": 0
   },
   {
-    "_id": "6512d74cc5dc3fe199a53a9b",
+    "_id": "6527981325913fcd7b0a58be",
     "name": "StrategyAdded",
     "__v": 0
   },
   {
-    "_id": "6512df94c5dc3fe199a54072",
-    "name": "Deposit",
-    "__v": 0
-  },
-  {
-    "_id": "6512e516c5dc3fe199a545f7",
-    "name": "StrategyReported",
-    "__v": 0
-  },
-  {
-    "_id": "65140536e7dcf9257a358f74",
-    "name": "Transfer",
-    "__v": 0
-  },
-  {
-    "_id": "65140608e7dcf9257a359213",
-    "name": "Withdraw",
-    "__v": 0
-  },
-  {
-    "_id": "6514061ce7dcf9257a359252",
-    "name": "StrategyRevoked",
-    "__v": 0
-  },
-  {
-    "_id": "651407fce7dcf9257a359a63",
+    "_id": "6527981325913fcd7b0a58ff",
     "name": "RoleRevoked",
     "__v": 0
   },
   {
-    "_id": "65140a18e7dcf9257a35a2da",
+    "_id": "6527981325913fcd7b0a590e",
+    "name": "Transfer",
+    "__v": 0
+  },
+  {
+    "_id": "6527981325913fcd7b0a5911",
+    "name": "Deposit",
+    "__v": 0
+  },
+  {
+    "_id": "6527981325913fcd7b0a591d",
+    "name": "StrategyReported",
+    "__v": 0
+  },
+  {
+    "_id": "6527981325913fcd7b0a5a52",
+    "name": "Withdraw",
+    "__v": 0
+  },
+  {
+    "_id": "6527983125913fcd7b0a668b",
+    "name": "StrategyRevoked",
+    "__v": 0
+  },
+  {
+    "_id": "6527984525913fcd7b0a6c5e",
     "name": "StrategyAllocBPSUpdated",
     "__v": 0
   },
   {
-    "_id": "65142b38e7dcf9257a35ef48",
-    "name": "TvlCapUpdated",
-    "__v": 0
-  },
-  {
-    "_id": "65142d40e7dcf9257a35f4af",
-    "name": "Approval",
-    "__v": 0
-  },
-  {
-    "_id": "65143268e7dcf9257a3602f4",
+    "_id": "6527984525913fcd7b0a6c98",
     "name": "StrategyFeeBPSUpdated",
     "__v": 0
   },
   {
-    "_id": "65144258e7dcf9257a36319a",
+    "_id": "652798c625913fcd7b0aa160",
+    "name": "TvlCapUpdated",
+    "__v": 0
+  },
+  {
+    "_id": "652798d025913fcd7b0aa5a4",
+    "name": "Approval",
+    "__v": 0
+  },
+  {
+    "_id": "6527993425913fcd7b0acbc5",
     "name": "UpdateWithdrawalQueue",
     "__v": 0
   }

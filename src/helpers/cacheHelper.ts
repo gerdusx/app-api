@@ -8,7 +8,7 @@ import Token, { IToken } from "../models/Token";
 import Vault, { IVault } from "../models/Vault"
 import { IVaultSnapshot, VaultSnapshot } from "../models/VaultSnapshot";
 import { filterLastXDays } from "./data/filterLastXDays";
-import { ethers } from "ethers";
+import { ethers, formatUnits, parseUnits } from "ethers";
 import { IVaultSnapshotDto, ISnapshot_Delta } from "../interfaces/dto/IVaultSnapshotDto";
 import Chain, { IChain } from "../models/Chain";
 import { sortTimestampByProp } from "./data/sortTimestampByProp";
@@ -41,7 +41,15 @@ const updateVaultCache = (vaults: IVault[], tokens: IToken[], vaultSnapshotsCach
 
     const plainVaults = vaults.map((v: any) => v.toObject());
     const vaultsDto = plainVaults.map(vault => {
-        const currentVaultSnapshots = vaultSnapshotsCache.filter(x => x.vaultAddress?.toLowerCase() === vault.address?.toLowerCase());
+        const currentVaultSnapshots = vaultSnapshotsCache.filter(x => x.vaultAddress?.toLowerCase() === vault.address?.toLowerCase()).map(snapshot => {
+            // const totalAssets = (Number(formatUnits(snapshot.totalAllocated, vault.decimals)) + Number(formatUnits(snapshot.totalIdle, vault.decimals)));
+            const totalAssets = BigInt(snapshot.totalAllocated) + BigInt(snapshot.totalIdle);
+
+            return {
+                ...snapshot,
+                totalAssets: totalAssets.toString()
+            }
+        });
         const currentVaultStrategies = strategiesCache.filter(x => x.vaultAddress?.toLowerCase() === vault.address.toLowerCase() && x.isActive);
         const currentVaultToken = vault.token ? tokens.find(x => x.address?.toLowerCase() === vault.token?.toLowerCase()) : undefined;
 
@@ -150,7 +158,7 @@ const updateChainCache = async (chains: IChain[]) => {
 
 }
 
-export const getTokensWithUsdValues = async (): Promise<IToken[]> => {
+export const updateTokensCache = async () => {
     const tokens = await Token.find();
     const coinIds = tokens.map(token => token.coinId).join(",");
     let coinGeckoQuery = `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd`;
@@ -164,7 +172,15 @@ export const getTokensWithUsdValues = async (): Promise<IToken[]> => {
     });
 
     cache.put('tokens', updatedTokens);
-    return updatedTokens;
+};
+
+export const getTokensWithUsdValues = async (): Promise<IToken[]> => {
+    let tokens = cache.get('tokens') as IToken[];
+    if (!tokens) {
+        updateTokensCache();
+        tokens = cache.get('tokens') as IToken[];
+    }
+    return tokens;
 };
 
 export const updateVaultLastsnapshotDeltas = (): IVaultDto[] => {
@@ -294,13 +310,13 @@ const getTotalUsersFromChainSnapshot = (chain: IChain, daysAgo: number): number 
 const getTvlFromSnapshot = (vault: IVaultDto, index: number) => {
     const lastIndex = vault.last30SnapShots.length - 1;
     const validIndex = (lastIndex - index) >= 0 ? (lastIndex - index) : lastIndex;
-    return vault.last30SnapShots[validIndex].usd?.tvl || 0;
+    return vault.last30SnapShots[validIndex]?.usd?.tvl || 0;
 };
 
 const getTotalUsersFromSnapshot = (vault: IVaultDto, index: number) => {
     const lastIndex = vault.last30SnapShots.length - 1;
     const validIndex = (lastIndex - index) >= 0 ? (lastIndex - index) : lastIndex;
-    return vault.last30SnapShots[validIndex].users?.totalUsers || 0;
+    return vault.last30SnapShots[validIndex]?.users?.totalUsers || 0;
 };
 
 const calculateTvlDiffAndPerc = (latestTvl: number, previousTvl: number) => {

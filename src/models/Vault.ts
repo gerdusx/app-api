@@ -3,14 +3,14 @@ import mongoose from 'mongoose';
 export interface IVault {
     address: string,
     chainId: number,
-    startingBlock: number,
-    dataFetched: boolean,
-    name: string;
-    symbol: string;
-    asset: string;
-    constructionTime: number;
-    token: string;
-    decimals: number;
+    startingBlock?: number,
+    dataFetched?: boolean,
+    name?: string;
+    symbol?: string;
+    asset?: string;
+    constructionTime?: number;
+    token?: string;
+    decimals?: number;
 }
 
 const VaultSchema = new mongoose.Schema({

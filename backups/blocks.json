@@ -1,19 +1,19 @@
 [
   {
-    "_id": "650c26e71dd50549905938e9",
-    "chainId": 10,
-    "latestBlock": 110298452,
-    "blocksToFetch": 2500,
-    "handler": "event",
-    "__v": 0
-  },
-  {
     "_id": "650d96200ed9da4c1747fc9c",
     "chainId": 10,
-    "latestBlock": 110268136,
+    "latestBlock": 110750450,
     "blocksToFetch": 1000,
     "handler": "block",
     "blockInterval": 950,
+    "__v": 0
+  },
+  {
+    "_id": "650c26e71dd50549905938e9",
+    "chainId": 10,
+    "latestBlock": 110751361,
+    "blocksToFetch": 2500,
+    "handler": "event",
     "__v": 0
   }
 ]

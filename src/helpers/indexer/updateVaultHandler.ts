@@ -7,16 +7,16 @@ import Vault, { IVault } from "../../models/Vault";
 
 export const updateVaultHandler = async (event: IBlockchainEvent) => {
     try {
+        console.log("updateVaultHandler", updateVaultHandler)
         const vault = await Vault.findOne({address: event.contractAddress}) as IVault;
         if (!vault.dataFetched) {
             const provider = getProviderByChain(event.chainId);
     
             const contract = new ethers.Contract(event.contractAddress, VAULT_V2_ABI, provider);
     
-            const [name, symbol, asset, constructionTime, token, decimals] = await Promise.all([
+            const [name, symbol, constructionTime, token, decimals] = await Promise.all([
                 contract.name(),
                 contract.symbol(),
-                contract.asset(),
                 contract.constructionTime(),
                 contract.token(),
                 contract.decimals()
@@ -29,7 +29,7 @@ export const updateVaultHandler = async (event: IBlockchainEvent) => {
                     $set: {
                         name: name,
                         symbol: symbol,
-                        asset: asset,
+                        asset: token,
                         constructionTime: Number(constructionTime),
                         token: token,
                         decimals: Number(decimals),
