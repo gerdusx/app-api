@@ -158,38 +158,41 @@
     "address": "0xef82200DC96a14af76f5fB7f27DbaDB5228f6A0C",
     "chainId": 10,
     "startingBlock": 84430128,
-    "asset": "0x68f180fcCe6836688e9084f035309E29Bf0A2095",
-    "constructionTime": 1680041368,
     "dataFetched": true,
-    "decimals": 8,
     "name": "Ethos Reserve wBTC Vault",
     "symbol": "ethos-wBTC",
-    "token": "0x68f180fcCe6836688e9084f035309E29Bf0A2095"
+    "asset": "0x68f180fcCe6836688e9084f035309E29Bf0A2095",
+    "constructionTime": 1680041368,
+    "token": "0x68f180fcCe6836688e9084f035309E29Bf0A2095",
+    "decimals": 8,
+    "__v": 0
   },
   {
     "_id": "652556354dc91247a280ab8a",
     "address": "0x1225c53F510877074d0D1Bace26C4f0581c24cF7",
     "chainId": 10,
     "startingBlock": 84419622,
-    "asset": "0x4200000000000000000000000000000000000006",
-    "constructionTime": 1680036103,
     "dataFetched": true,
-    "decimals": 18,
     "name": "Ethos Reserve wETH Vault",
     "symbol": "ethos-wETH",
-    "token": "0x4200000000000000000000000000000000000006"
+    "asset": "0x4200000000000000000000000000000000000006",
+    "constructionTime": 1680036103,
+    "token": "0x4200000000000000000000000000000000000006",
+    "decimals": 18,
+    "__v": 0
   },
   {
     "_id": "652556794dc91247a280ab8b",
     "address": "0x6938b5b43b281bF24202437b86bbd2866a79cF6C",
     "chainId": 10,
     "startingBlock": 84421670,
-    "asset": "0x4200000000000000000000000000000000000042",
-    "constructionTime": 1680036945,
     "dataFetched": true,
-    "decimals": 18,
     "name": "Ethos Reserve OP Vault",
     "symbol": "ethos-OP",
-    "token": "0x4200000000000000000000000000000000000042"
+    "asset": "0x4200000000000000000000000000000000000042",
+    "constructionTime": 1680036945,
+    "token": "0x4200000000000000000000000000000000000042",
+    "decimals": 18,
+    "__v": 0
   }
 ]

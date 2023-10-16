@@ -13,6 +13,8 @@ import { IVaultSnapshotDto, ISnapshot_Delta } from "../interfaces/dto/IVaultSnap
 import Chain, { IChain } from "../models/Chain";
 import { sortTimestampByProp } from "./data/sortTimestampByProp";
 import { IUser, User } from "../models/User";
+import { BlockchainEvent, IBlockchainEvent } from "../models/BlockchainEvent";
+import { eventMain } from "./indexer/eventMain";
 
 export const updateApiCache = async () => {
     console.log("updating api cache")
@@ -173,6 +175,7 @@ export const updateTokensCache = async () => {
 
     cache.put('tokens', updatedTokens);
 };
+
 
 export const getTokensWithUsdValues = async (): Promise<IToken[]> => {
     let tokens = cache.get('tokens') as IToken[];
@@ -350,6 +353,30 @@ export const aggregateChainSnapshots = (vaults: IVaultDto[], users: IUser[]): { 
         let aggregatedData = Object.values(aggregatedDataMap);
 
         return sortTimestampByProp(aggregatedData, "timestamp", "asc").slice(-30);
+    } catch (error) {
+        console.log(error)
+    }
+
+    return [];
+};
+
+export const processEvents = async () => {
+    try {
+        const newEvents: IBlockchainEvent[] = await BlockchainEvent.find({ processed: { $exists: false } })
+            .sort({ blockTimestamp: 1, logIndex: 1 })
+            .limit(300)
+            .exec();
+
+        console.log(`processing ${newEvents.length} new events...`,)
+
+        for (let index = 0; index < newEvents.length; index++) {
+            const event = newEvents[index];
+
+            if (event) {
+                await eventMain(event);
+                // await updateApiCache();
+            }
+        }
     } catch (error) {
         console.log(error)
     }

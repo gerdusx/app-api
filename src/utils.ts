@@ -23,7 +23,7 @@ export const getUpdatedTokens = async () => {
     const coinIds = tokens.map(token => token.coinId).join(",");
     let coinGeckoQuery = `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd`;
     const coinsResponse = await axios.get(coinGeckoQuery);
-    const updatedTokens:any = tokens.map(token => {
+    const updatedTokens: any = tokens.map(token => {
         const usdValue = token.coinId ? coinsResponse.data[token.coinId]?.usd : 0;
         return {
             ...token.toObject(),
@@ -186,34 +186,34 @@ export const backup = async (req: Request, res: Response) => {
         const vaults = await Vault.find();
         const snapshots = await VaultSnapshot.find();
 
-        const eventsJson = JSON.stringify(events, null, 2); 
+        const eventsJson = JSON.stringify(events, null, 2);
         fs.writeFileSync('backups/events.json', eventsJson);
 
-        const chainsJson = JSON.stringify(chains, null, 2); 
+        const chainsJson = JSON.stringify(chains, null, 2);
         fs.writeFileSync('backups/chains.json', chainsJson);
 
-        const eventtypesJson = JSON.stringify(eventtypes, null, 2); 
+        const eventtypesJson = JSON.stringify(eventtypes, null, 2);
         fs.writeFileSync('backups/eventtypes.json', eventtypesJson);
 
-        const blocksJson = JSON.stringify(blocks, null, 2); 
+        const blocksJson = JSON.stringify(blocks, null, 2);
         fs.writeFileSync('backups/blocks.json', blocksJson);
 
-        const strategiesJson = JSON.stringify(strategies, null, 2); 
+        const strategiesJson = JSON.stringify(strategies, null, 2);
         fs.writeFileSync('backups/strategies.json', strategiesJson);
 
-        const reportsJson = JSON.stringify(reports, null, 2); 
+        const reportsJson = JSON.stringify(reports, null, 2);
         fs.writeFileSync('backups/reports.json', reportsJson);
 
-        const tokensJson = JSON.stringify(tokens, null, 2); 
+        const tokensJson = JSON.stringify(tokens, null, 2);
         fs.writeFileSync('backups/tokens.json', tokensJson);
 
-        const usersJson = JSON.stringify(users, null, 2); 
+        const usersJson = JSON.stringify(users, null, 2);
         fs.writeFileSync('backups/users.json', usersJson);
 
-        const vaultsJson = JSON.stringify(vaults, null, 2); 
+        const vaultsJson = JSON.stringify(vaults, null, 2);
         fs.writeFileSync('backups/vaults.json', vaultsJson);
 
-        const snapshotsJson = JSON.stringify(snapshots, null, 2); 
+        const snapshotsJson = JSON.stringify(snapshots, null, 2);
         fs.writeFileSync('backups/snapshots.json', snapshotsJson);
 
         res.json("done")
@@ -272,12 +272,13 @@ export const restoreBackup = async (req: Request, res: Response) => {
     }
 };
 
-export const processEvents = async (req: Request, res: Response) => {
+export const processEvents = async () => {
     try {
-        const newEvents: IBlockchainEvent[] = await BlockchainEvent.find({processed: { $exists: false }, eventName: "StrategyReported"})
-                    .sort({ blockTimestamp: 1, logIndex: 1 })
-                    .exec();
+        const newEvents: IBlockchainEvent[] = await BlockchainEvent.find({ processed: { $exists: false } })
+            .sort({ blockTimestamp: 1, logIndex: 1 })
+            .exec();
 
+        console.log(`processing ${newEvents.length} new events...`,)
 
         for (let index = 0; index < newEvents.length; index++) {
             const event = newEvents[index];
@@ -287,10 +288,10 @@ export const processEvents = async (req: Request, res: Response) => {
             }
         }
 
-        res.json("Events processed");
+        return true;
     } catch (error) {
         console.error(error);
-        res.status(500).json(error);
+        return false;
     }
 };
 

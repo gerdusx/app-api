@@ -8,7 +8,7 @@ import { fetchVaultsWithCache, fetchTokensWithCache, fetchArkiverDataWithCache, 
 import { indexBlocks, indexEvents } from './indexer';
 import { BlockchainEvent, IBlockchainEvent } from './models/BlockchainEvent';
 import { eventMain } from './helpers/indexer/eventMain';
-import { balances, createVault, fetchChains, fetchVaults, readVault } from './helpers/routeHandlers';
+import { balances, createVault, fetchChains, fetchVaults, processEventsHandler, readVault, updateStrategies } from './helpers/routeHandlers';
 import { updateApiCache, updateTokensCache } from './helpers/cacheHelper';
 
 // Connect to the database
@@ -39,6 +39,8 @@ app.post('/api/balances', balances);
 
 
 app.post('/api/readvault', readVault);
+app.get('/api/strategies/update', updateStrategies);
+app.get('/api/events/process', processEventsHandler);
 
 
 

@@ -10,6 +10,11 @@ import { getProviderByChain } from './getProviderByChain';
 import Vault, { IVault } from '../models/Vault';
 import { indexBlocks, indexEvents } from '../indexer';
 import { VAULT_V2_ABI } from '../abi/vaultV2Abi';
+import Strategy from '../models/Strategy';
+import { REAPER_BASE_STRATEGY_V4 } from '../abi/ReaperBaseStrategyv4';
+import { REAPER_STRATEGY_SONNE_V2 } from '../abi/ReaperStrategySonneV2';
+import Protocol, { IProtocol } from '../models/Protocol';
+import { processEvents } from '../utils';
 
 export const fetchVaults = async (req: Request, res: Response) => {
     try {
@@ -29,14 +34,14 @@ export const fetchVaults = async (req: Request, res: Response) => {
 export const createVault = async (req: Request, res: Response) => {
     try {
         console.log(req.body)
-        
+
         // Destructure the address and chainId from the request body
         const { address, chainId } = req.body;
 
         const provider = getProviderByChain(chainId);
         const currentBlock = await provider?.getBlockNumber();
         let vault = await Vault.findOne({ address, chainId });
-        
+
         if (!vault) {
 
             const newVault: IVault = {
@@ -56,6 +61,62 @@ export const createVault = async (req: Request, res: Response) => {
         console.error(error);
         res.status(500).json(error);
     }
+};
+
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+export const updateStrategies = async (req: Request, res: Response) => {
+    const strategies = await Strategy.find();
+
+    const abis = [
+        REAPER_BASE_STRATEGY_V4,
+        REAPER_STRATEGY_SONNE_V2
+    ]
+
+    for (let index = 0; index < strategies.length; index++) {
+        //for (let index = 0; index < 1; index++) {
+        const strategy = strategies[index];
+        const provider = getProviderByChain(strategy.chainId);
+
+        let cWantFound = false;
+
+        for (let abiIndex = 0; abiIndex < abis.length; abiIndex++) {
+            try {
+                const contract = new ethers.Contract(strategy.address, abis[abiIndex], provider);
+                const cWant: string = await contract.cWant();
+                console.log(`${strategy.address} - ${cWant}`);
+                cWantFound = true;
+
+                await Strategy.updateOne({ _id: strategy._id }, { $set: { protocolAddress: cWant } });
+
+                let protocol = await Protocol.findOne({ address: cWant });
+                if (!protocol) {
+                    const newProtocol = new Protocol({
+                        address: cWant,
+                        fork: "Compound",
+                        chainId: strategy.chainId,
+                    });
+
+                    console.log("newProtocol", newProtocol)
+
+                    await newProtocol.save();
+                }
+
+                break; // Break out of the inner loop once cWant is found
+            } catch (error) {
+                // If there's an error, it will continue to the next ABI
+                //console.error(`Error with ABI index ${abiIndex}`);
+            }
+
+            await delay(1000);
+        }
+
+        if (!cWantFound) {
+            console.log(`${strategy.address} - cWant not found for strategy ${index}`);
+        }
+    }
+
+    res.json("done");
 };
 
 export const balances = async (req: Request, res: Response) => {
@@ -82,15 +143,6 @@ export const readVault = async (req: Request, res: Response) => {
         const provider = getProviderByChain(10);
 
         const vaultAddr = "0xc351628EB244ec633d5f21fBD6621e1a683B1181";
-        // const walletAddr = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
-
-        // const contract = new ethers.Contract(tokenAddr, ERC20, provider);
-        // const balance = await contract.balanceOf(walletAddr);
-
-        // console.log("balance", ethers.formatUnits(balance, 18));
-
-        //const provider = getProviderByChain(event.chainId);
-    
         const contract = new ethers.Contract(vaultAddr, VAULT_V2_ABI, provider);
 
         const [name, symbol, constructionTime, token, decimals] = await Promise.all([
@@ -102,7 +154,7 @@ export const readVault = async (req: Request, res: Response) => {
             contract.decimals()
         ]);
 
-        res.json({name: name.toString(), symbol: symbol.toString(), constructionTime: constructionTime.toString(), token: token.toString(), decimals: decimals.toString()});
+        res.json({ name: name.toString(), symbol: symbol.toString(), constructionTime: constructionTime.toString(), token: token.toString(), decimals: decimals.toString() });
     } catch (error) {
         console.error(error);
         res.status(500).json(error);
@@ -136,5 +188,19 @@ export const fetchTokens = async (req: Request, res: Response) => {
     } catch (error) {
         console.error(error);
         res.status(500).json(error);
+    }
+};
+
+export const processEventsHandler = async (req: Request, res: Response) => {
+    try {
+        const chainId = 10; // or whichever chainId you want to index
+        await indexEvents(chainId);
+        const response = await processEvents();
+        await updateApiCache();
+
+        res.json(response);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json(false);
     }
 };

@@ -41,7 +41,9 @@
     "dateAdded": 1683797322,
     "feeBPS": "1000",
     "allocBPS": "0",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0x8cD6b19A07d754bF36AdEEE79EDF4F2134a8F571",
+    "protocolAddress": "0x8cD6b19A07d754bF36AdEEE79EDF4F2134a8F571"
   },
   {
     "_id": "6527983158f7a1680d119b9e",
@@ -52,7 +54,9 @@
     "dateAdded": 1683798022,
     "feeBPS": "1000",
     "allocBPS": "0",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0xf7B5965f5C117Eb1B5450187c9DcFccc3C317e8E",
+    "protocolAddress": "0xf7B5965f5C117Eb1B5450187c9DcFccc3C317e8E"
   },
   {
     "_id": "6527983158f7a1680d119ba5",
@@ -63,7 +67,9 @@
     "dateAdded": 1683798052,
     "feeBPS": "1000",
     "allocBPS": "0",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0x33865E09A572d4F1CC4d75Afc9ABcc5D3d4d867D",
+    "protocolAddress": "0x33865E09A572d4F1CC4d75Afc9ABcc5D3d4d867D"
   },
   {
     "_id": "6527983158f7a1680d119bf3",
@@ -74,7 +80,9 @@
     "dateAdded": 1683804735,
     "feeBPS": "1000",
     "allocBPS": "0",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0x8cD6b19A07d754bF36AdEEE79EDF4F2134a8F571",
+    "protocolAddress": "0x8cD6b19A07d754bF36AdEEE79EDF4F2134a8F571"
   },
   {
     "_id": "6527983158f7a1680d119c2e",
@@ -85,7 +93,9 @@
     "dateAdded": 1683829273,
     "feeBPS": "1000",
     "allocBPS": "0",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0xEC8FEa79026FfEd168cCf5C627c7f486D77b765F",
+    "protocolAddress": "0xEC8FEa79026FfEd168cCf5C627c7f486D77b765F"
   },
   {
     "_id": "6527983158f7a1680d119c52",
@@ -96,7 +106,9 @@
     "dateAdded": 1683829863,
     "feeBPS": "1000",
     "allocBPS": "0",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0x5569b83de187375d43FBd747598bfe64fC8f6436",
+    "protocolAddress": "0x5569b83de187375d43FBd747598bfe64fC8f6436"
   },
   {
     "_id": "6527983158f7a1680d119c84",
@@ -107,7 +119,9 @@
     "dateAdded": 1683830739,
     "feeBPS": "1000",
     "allocBPS": "0",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0x5Ff29E4470799b982408130EFAaBdeeAE7f66a10",
+    "protocolAddress": "0x5Ff29E4470799b982408130EFAaBdeeAE7f66a10"
   },
   {
     "_id": "6527983158f7a1680d119caf",
@@ -118,7 +132,9 @@
     "dateAdded": 1683832928,
     "feeBPS": "1000",
     "allocBPS": "0",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0x26AaB17f27CD1c8d06a0Ad8E4a1Af8B1032171d5",
+    "protocolAddress": "0x26AaB17f27CD1c8d06a0Ad8E4a1Af8B1032171d5"
   },
   {
     "_id": "6527984e58f7a1680d11a741",
@@ -129,7 +145,9 @@
     "dateAdded": 1685473057,
     "feeBPS": "0",
     "allocBPS": "2000",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0x33865E09A572d4F1CC4d75Afc9ABcc5D3d4d867D",
+    "protocolAddress": "0x33865E09A572d4F1CC4d75Afc9ABcc5D3d4d867D"
   },
   {
     "_id": "6527984e58f7a1680d11a746",
@@ -140,7 +158,9 @@
     "dateAdded": 1685473057,
     "feeBPS": "0",
     "allocBPS": "9000",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0x8cD6b19A07d754bF36AdEEE79EDF4F2134a8F571",
+    "protocolAddress": "0x8cD6b19A07d754bF36AdEEE79EDF4F2134a8F571"
   },
   {
     "_id": "6527984e58f7a1680d11a750",
@@ -151,7 +171,9 @@
     "dateAdded": 1685473057,
     "feeBPS": "0",
     "allocBPS": "500",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0xf7B5965f5C117Eb1B5450187c9DcFccc3C317e8E",
+    "protocolAddress": "0xf7B5965f5C117Eb1B5450187c9DcFccc3C317e8E"
   },
   {
     "_id": "6527984f58f7a1680d11a8e2",
@@ -250,7 +272,9 @@
     "dateAdded": 1689876229,
     "feeBPS": "1000",
     "allocBPS": "6500",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0xf7B5965f5C117Eb1B5450187c9DcFccc3C317e8E",
+    "protocolAddress": "0xf7B5965f5C117Eb1B5450187c9DcFccc3C317e8E"
   },
   {
     "_id": "652798c658f7a1680d11df98",
@@ -261,7 +285,9 @@
     "dateAdded": 1689876229,
     "feeBPS": "1000",
     "allocBPS": "9000",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0x5Ff29E4470799b982408130EFAaBdeeAE7f66a10",
+    "protocolAddress": "0x5Ff29E4470799b982408130EFAaBdeeAE7f66a10"
   },
   {
     "_id": "652798c658f7a1680d11df9d",
@@ -272,7 +298,9 @@
     "dateAdded": 1689876229,
     "feeBPS": "1000",
     "allocBPS": "9500",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0x5569b83de187375d43FBd747598bfe64fC8f6436",
+    "protocolAddress": "0x5569b83de187375d43FBd747598bfe64fC8f6436"
   },
   {
     "_id": "652798c658f7a1680d11dfa2",
@@ -283,7 +311,9 @@
     "dateAdded": 1689876229,
     "feeBPS": "1000",
     "allocBPS": "9500",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0x8cD6b19A07d754bF36AdEEE79EDF4F2134a8F571",
+    "protocolAddress": "0x8cD6b19A07d754bF36AdEEE79EDF4F2134a8F571"
   },
   {
     "_id": "652798c658f7a1680d11dfa7",
@@ -294,7 +324,9 @@
     "dateAdded": 1689876229,
     "feeBPS": "1000",
     "allocBPS": "8000",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0xEC8FEa79026FfEd168cCf5C627c7f486D77b765F",
+    "protocolAddress": "0xEC8FEa79026FfEd168cCf5C627c7f486D77b765F"
   },
   {
     "_id": "652798c658f7a1680d11dfac",
@@ -305,7 +337,9 @@
     "dateAdded": 1689876229,
     "feeBPS": "1000",
     "allocBPS": "9500",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0x26AaB17f27CD1c8d06a0Ad8E4a1Af8B1032171d5",
+    "protocolAddress": "0x26AaB17f27CD1c8d06a0Ad8E4a1Af8B1032171d5"
   },
   {
     "_id": "652798c658f7a1680d11dfb1",
@@ -316,7 +350,9 @@
     "dateAdded": 1689876229,
     "feeBPS": "1000",
     "allocBPS": "10000",
-    "__v": 0
+    "__v": 0,
+    "cWant": "0x33865E09A572d4F1CC4d75Afc9ABcc5D3d4d867D",
+    "protocolAddress": "0x33865E09A572d4F1CC4d75Afc9ABcc5D3d4d867D"
   },
   {
     "_id": "6527995d58f7a1680d1220f3",

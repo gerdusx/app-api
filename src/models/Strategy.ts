@@ -9,6 +9,7 @@ export interface IStrategy {
     dateAdded?: number;
     feeBPS: string;
     allocBPS: string;
+    protocolAddress?: string;
 }
 
 const strategySchema = new mongoose.Schema({
@@ -18,7 +19,8 @@ const strategySchema = new mongoose.Schema({
     vaultAddress: String,
     dateAdded: Number,
     feeBPS: String,
-    allocBPS: String
+    allocBPS: String,
+    protocolAddress: String
 });
 
 const Strategy = mongoose.model<IStrategy>('Strategy', strategySchema);
