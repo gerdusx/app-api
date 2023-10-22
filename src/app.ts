@@ -104,7 +104,9 @@ cron.schedule('*/1 * * * *', async () => {
                 }
             }
 
-            await updateApiCache();
+            if (newEvents?.length > 0) {
+                await updateApiCache();
+            }
         }
     } catch (error) {
         console.error('Error in cron job:', error);
