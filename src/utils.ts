@@ -16,6 +16,7 @@ import StrategyReport from './models/StrategyReport';
 import Chain from './models/Chain';
 import { EventType } from './models/EventType';
 import { User } from './models/User';
+import Protocol from './models/Protocol';
 const fs = require('fs');
 
 export const getUpdatedTokens = async () => {
@@ -185,6 +186,7 @@ export const backup = async (req: Request, res: Response) => {
         const users = await User.find();
         const vaults = await Vault.find();
         const snapshots = await VaultSnapshot.find();
+        const protocols = await Protocol.find();
 
         const eventsJson = JSON.stringify(events, null, 2);
         fs.writeFileSync('backups/events.json', eventsJson);
@@ -215,6 +217,9 @@ export const backup = async (req: Request, res: Response) => {
 
         const snapshotsJson = JSON.stringify(snapshots, null, 2);
         fs.writeFileSync('backups/snapshots.json', snapshotsJson);
+
+        const protocolsJson = JSON.stringify(protocols, null, 2);
+        fs.writeFileSync('backups/protocols.json', protocolsJson);
 
         res.json("done")
     } catch (error) {
@@ -263,6 +268,10 @@ export const restoreBackup = async (req: Request, res: Response) => {
         const snapshotsJson = fs.readFileSync('backups/snapshots.json', 'utf8');
         const snapshots = JSON.parse(snapshotsJson);
         await VaultSnapshot.insertMany(snapshots);
+
+        const protocolsJson = fs.readFileSync('backups/protocols.json', 'utf8');
+        const protocols = JSON.parse(protocolsJson);
+        await Protocol.insertMany(protocols);
 
 
         res.json({ message: 'Data restored successfully!' });

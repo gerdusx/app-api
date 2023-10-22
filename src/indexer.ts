@@ -14,6 +14,7 @@ dotenv.config();
 const contractInterface = new ethers.Interface(VAULT_V2_ABI);
 
 export const indexEvents = async (chainId: number) => {
+
     try {
         const provider = getProviderByChain(chainId);
 
@@ -67,7 +68,8 @@ export const indexEvents = async (chainId: number) => {
             // // Filter out events that are already in the database
             const cachedEvents = await fetchBlockChainEventsWithCache();
             const uniqueEventsToSave = eventsToSave.filter(event => !cachedEvents.some(
-                cachedEvent => cachedEvent.transactionHash === event.transactionHash &&
+                cachedEvent => cachedEvent.chainId === chainId &&
+                    cachedEvent.transactionHash === event.transactionHash &&
                     cachedEvent.eventName === event.eventName &&
                     cachedEvent.eventParametersString === event.eventParametersString
             ));
@@ -80,7 +82,7 @@ export const indexEvents = async (chainId: number) => {
 
             await updateLatestProcessedBlock(chainId, endBlock, "event");
 
-            console.log(`${startBlock} to ${endBlock} -new events: ${eventsToSave.length}, unique events: ${uniqueEventsToSave.length} - cached events: ${cachedEvents.length} (#blocks: ${endBlock - startBlock})`)
+            console.log(`chain: ${chainId} - ${startBlock} to ${endBlock} - new events: ${eventsToSave.length}, unique events: ${uniqueEventsToSave.length} - cached events: ${cachedEvents.length} (#blocks: ${endBlock - startBlock})`)
         } else {
             console.log("No provider found")
         }
@@ -108,15 +110,13 @@ export const indexBlocks = async (chainId: number) => {
             const currentBlock = await provider.getBlockNumber();
             const blocksToCurrentBlock = currentBlock - startBlock;
 
-            console.log("blocksToCurrentBlock", blocksToCurrentBlock)
-
             const blocksToFetch = blocksToCurrentBlock < processedBlock.blocksToFetch ? blocksToCurrentBlock : processedBlock.blocksToFetch;
 
             // const endBlock = blocksToCurrentBlock < nextBlock.blocksToFetch ? startBlock + blocksToCurrentBlock : startBlock + nextBlock.blocksToFetch
 
             const blocksToIndex = getBlocksToFetch(startBlock, blocksToFetch, processedBlock.blockInterval, currentBlock);
 
-            console.log("blocksToIndex", blocksToIndex)
+            // console.log("blocksToIndex", blocksToIndex)
 
             if (blocksToIndex?.length > 0) {
                 await Promise.all(vaultAddresses.map(async vaultAddress => {
@@ -128,23 +128,11 @@ export const indexBlocks = async (chainId: number) => {
                         const nowDay = nearestDay(Number(now));
 
                         const contract = new ethers.Contract(vaultAddress, VAULT_V2_ABI, provider);
-                        // const [totalIdle, totalAllocated, getPricePerFullShare, lockedProfit, totalAssets, totalSupply, totalAllocBPS, tvlCap] = await Promise.all([
-                        //     contract.totalIdle({blockTag: blockNumber}),
-                        //     contract.totalAllocated({blockTag: blockNumber}),
-                        //     contract.getPricePerFullShare({blockTag: blockNumber}),
-                        //     contract.lockedProfit({blockTag: blockNumber}),
-                        //     contract.totalAssets({blockTag: blockNumber}),
-                        //     contract.totalSupply({blockTag: blockNumber}),
-                        //     contract.totalAllocBPS({blockTag: blockNumber}),
-                        //     contract.tvlCap({blockTag: blockNumber}),
-                        // ])
 
                         const [totalIdle, totalAllocated, getPricePerFullShare, totalSupply, totalAllocBPS, tvlCap] = await Promise.all([
                             contract.totalIdle({blockTag: blockNumber}),
                             contract.totalAllocated({blockTag: blockNumber}),
                             contract.getPricePerFullShare({blockTag: blockNumber}),
-                            // contract.lockedProfit({blockTag: blockNumber}),
-                            //contract.totalAssets({blockTag: blockNumber}),
                             contract.totalSupply({blockTag: blockNumber}),
                             contract.totalAllocBPS({blockTag: blockNumber}),
                             contract.tvlCap({blockTag: blockNumber}),
@@ -152,7 +140,8 @@ export const indexBlocks = async (chainId: number) => {
 
                         const currentSnapshot = await VaultSnapshot.findOne({
                             timestamp: nowDay,
-                            vaultAddress: vaultAddress.toLowerCase()
+                            vaultAddress: vaultAddress.toLowerCase(),
+                            chainId
                         });
 
                         if (!currentSnapshot) {
@@ -165,8 +154,6 @@ export const indexBlocks = async (chainId: number) => {
                                 totalAllocated: totalAllocated.toString(),
                                 chainId: chainId,
                                 pricePerFullShare: getPricePerFullShare.toString(),
-                                //lockedProfit: lockedProfit.toString(),
-                                //totalAssets: totalAssets.toString(),
                                 totalSupply: totalSupply.toString(),
                                 totalAllocBPS: totalAllocBPS.toString(),
                                 tvlCap: tvlCap.toString(),
@@ -179,8 +166,6 @@ export const indexBlocks = async (chainId: number) => {
                             currentSnapshot.totalIdle = totalIdle.toString();
                             currentSnapshot.totalAllocated = totalAllocated.toString();
                             currentSnapshot.pricePerFullShare = getPricePerFullShare.toString();
-                            //currentSnapshot.lockedProfit = lockedProfit.toString();
-                            //currentSnapshot.totalAssets = totalAssets.toString();
                             currentSnapshot.totalSupply = totalSupply.toString();
                             currentSnapshot.totalAllocBPS = totalAllocBPS.toString();
                             currentSnapshot.tvlCap = tvlCap.toString();
@@ -190,12 +175,12 @@ export const indexBlocks = async (chainId: number) => {
                     }
                 }));
 
-                console.log(`Blocks indexed: ${blocksToIndex[0]} to ${blocksToIndex[blocksToIndex.length - 1]}`);
+                console.log(`chain ${chainId} - Blocks indexed: ${blocksToIndex[0]} to ${blocksToIndex[blocksToIndex.length - 1]} - blocks indexed - ${blocksToIndex}`);
 
                 await updateLatestProcessedBlock(chainId, blocksToIndex[blocksToIndex.length - 1], "block");
 
             } else {
-                console.log(`No blocks to index - current block - ${currentBlock} - next block - ${processedBlock.latestBlock + processedBlock.blocksToFetch}`)
+                console.log(`chain ${chainId} - No blocks to index - current block - ${currentBlock} - next block - ${processedBlock.latestBlock + processedBlock.blocksToFetch}`)
             }
 
 
