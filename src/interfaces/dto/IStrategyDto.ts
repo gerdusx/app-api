@@ -10,6 +10,7 @@ export interface IStrategyDto extends IStrategy {
     aprReports: IStrategyReport[];
     isActive?: boolean;
     last30daysHarvests?: IStrategyHarvestLast30Days[],
+    last30daysHarvestProfit?: number,
     protocol?: IProtocol
 }
 

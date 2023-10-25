@@ -130,13 +130,16 @@ const updateStrategyCache = (strategies: IStrategy[], strategyReports: IStrategy
 
         const inDateRangeReports = filterLastXDays(currentStrategyReports, "reportDate", new Date().getTime(), 30) as IStrategyReport[];
 
+        const harvestData = processHarvestsData(inDateRangeReports, tokens, vault);
+
         const dto: IStrategyDto = {
             ...strategy,
             protocol,
             lastReport: currentStrategyReports[currentStrategyReports.length - 1],
             aprReports: inDateRangeReports,
             isActive: strategy.allocBPS !== "0",
-            last30daysHarvests: processHarvestsData(inDateRangeReports, tokens, vault)
+            last30daysHarvests: harvestData,
+            last30daysHarvestProfit: harvestData[harvestData.length - 1].accumulatedGainValue
         }
 
         return dto;
@@ -370,20 +373,20 @@ export const aggregateChainSnapshots = (vaults: IVaultDto[], users: IUser[]): { 
 const processHarvestsData = (reports: IStrategyReport[], tokens: IToken[], vault?: IVault) => {
     const reaperToken = tokens.find((x: any) => x.address.toLowerCase() === vault?.token?.toLowerCase()) as IToken;
 
+    // Initialize a result array for 30 days
+    let startDate = Date.now() / 1000 - 30 * 24 * 3600; // 30 days ago in seconds since epoch
+    let results: IStrategyHarvestLast30Days[] = Array.from({ length: 30 }, (_, i) => ({
+        timestamp: startDate + i * 24 * 3600,
+        accumulatedGainValue: 0,
+        accumulatedGain: "0" // assuming accumulatedGain is a string based on your code
+    }));
+
     if (reports?.length > 0) {
         // 1. Sort data by reportDate
         const sortedData = reports.sort((a, b) => a.reportDate! - b.reportDate!);
 
-        // 2. Initialize a result array for 30 days
-        let startDate = Date.now() / 1000 - 30 * 24 * 3600; // 30 days ago in seconds since epoch
-        let results: IStrategyHarvestLast30Days[] = Array.from({ length: 30 }, (_, i) => ({
-            timestamp: startDate + i * 24 * 3600,
-            accumulatedGainValue: 0,
-        }));
-
-        // 3. Accumulate gain over each day
+        // 2. Accumulate gain over each day
         let currentGainValue = BigInt(0);
-        let currentGain = 0;
         let dataIndex = 0;
         for (let i = 0; i < 30; i++) {
             let currentDateInSeconds = startDate + i * 24 * 3600;
@@ -401,14 +404,12 @@ const processHarvestsData = (reports: IStrategyReport[], tokens: IToken[], vault
                 const accumulatedGainUnits = ethers.formatUnits(currentGainValue.toString(), vault?.decimals);
                 const accumulatedGainValue = Number(accumulatedGainUnits);
 
-                results[i].accumulatedGainValue = accumulatedGainValue * reaperToken.usd
+                results[i].accumulatedGainValue = accumulatedGainValue * reaperToken.usd;
             }
         }
-
-        return results;
     }
 
-    return [];
+    return results;
 };
 
 export const processEvents = async () => {
