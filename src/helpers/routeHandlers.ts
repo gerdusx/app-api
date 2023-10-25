@@ -15,6 +15,8 @@ import { REAPER_BASE_STRATEGY_V4 } from '../abi/ReaperBaseStrategyv4';
 import { REAPER_STRATEGY_SONNE_V2 } from '../abi/ReaperStrategySonneV2';
 import Protocol, { IProtocol } from '../models/Protocol';
 import { processEvents } from '../utils';
+import { ReaperStrategyGranarySupplyOnlyV2 } from '../abi/ReaperStrategyGranarySupplyOnlyV2';
+import { ReaperStrategyStabilityPool } from '../abi/ReaperStrategyStabilityPool';
 
 export const fetchVaults = async (req: Request, res: Response) => {
     try {
@@ -66,11 +68,13 @@ export const createVault = async (req: Request, res: Response) => {
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const updateStrategies = async (req: Request, res: Response) => {
-    const strategies = await Strategy.find();
+    const strategies = await Strategy.find({chainId: 10});
 
     const abis = [
         REAPER_BASE_STRATEGY_V4,
-        REAPER_STRATEGY_SONNE_V2
+        REAPER_STRATEGY_SONNE_V2,
+        ReaperStrategyGranarySupplyOnlyV2,
+        ReaperStrategyStabilityPool
     ]
 
     for (let index = 0; index < strategies.length; index++) {
@@ -78,16 +82,25 @@ export const updateStrategies = async (req: Request, res: Response) => {
         const strategy = strategies[index];
         const provider = getProviderByChain(strategy.chainId);
 
-        let cWantFound = false;
+        let wantFound = false;
 
         for (let abiIndex = 0; abiIndex < abis.length; abiIndex++) {
             try {
                 const contract = new ethers.Contract(strategy.address, abis[abiIndex], provider);
                 const cWant: string = await contract.cWant();
-                console.log(`${strategy.address} - ${cWant}`);
-                cWantFound = true;
+                console.log(`cWant - ${strategy.address} - ${cWant}`);
+                wantFound = true;
 
                 await Strategy.updateOne({ _id: strategy._id }, { $set: { protocolAddress: cWant } });
+
+                const cWantContract = new ethers.Contract(cWant, ERC20, provider);
+                const [name, symbol, decimals] = await Promise.all([
+                    cWantContract.name(),
+                    cWantContract.symbol(),
+                    cWantContract.decimals(),
+                ])
+
+                console.log("data: ", name, symbol, decimals)
 
                 let protocol = await Protocol.findOne({ address: cWant });
                 if (!protocol) {
@@ -95,11 +108,19 @@ export const updateStrategies = async (req: Request, res: Response) => {
                         address: cWant,
                         fork: "Compound",
                         chainId: strategy.chainId,
+                        name,
+                        symbol,
+                        decimals: decimals.toString()
                     });
 
-                    console.log("newProtocol", newProtocol)
-
                     await newProtocol.save();
+                } else {
+                    // If the protocol exists, update its name, symbol, and decimals
+                    protocol.name = name;
+                    protocol.symbol = symbol;
+                    protocol.decimals = decimals.toString();
+                
+                    await protocol.save();
                 }
 
                 break; // Break out of the inner loop once cWant is found
@@ -108,11 +129,56 @@ export const updateStrategies = async (req: Request, res: Response) => {
                 //console.error(`Error with ABI index ${abiIndex}`);
             }
 
+            if (!wantFound) {
+                try {
+                    const contract = new ethers.Contract(strategy.address, abis[abiIndex], provider);
+                    const gWant: string = await contract.gWant();
+                    console.log(`gWant - ${strategy.address} - ${gWant}`);
+                    wantFound = true;
+
+                    await Strategy.updateOne({ _id: strategy._id }, { $set: { protocolAddress: gWant } });
+
+                    const gWantContract = new ethers.Contract(gWant, ERC20, provider);
+                    const [name, symbol, decimals] = await Promise.all([
+                        gWantContract.name(),
+                        gWantContract.symbol(),
+                        gWantContract.decimals(),
+                    ])
+    
+                    console.log("data: ", name, symbol, decimals)
+    
+                    let protocol = await Protocol.findOne({ address: gWant });
+                    if (!protocol) {
+                        const newProtocol = new Protocol({
+                            address: gWant,
+                            fork: "Granary",
+                            chainId: strategy.chainId,
+                            name,
+                            symbol,
+                            decimals: decimals.toString()
+                        });
+    
+                        await newProtocol.save();
+                    } else {
+                        protocol.name = name;
+                        protocol.symbol = symbol;
+                        protocol.decimals = decimals.toString();
+                    
+                        await protocol.save();
+                    }
+
+                    break;
+                } catch (error) {
+                    
+                }
+                
+            }
+
             await delay(1000);
         }
 
-        if (!cWantFound) {
-            console.log(`${strategy.address} - cWant not found for strategy ${index}`);
+        if (!wantFound) {
+            console.log(`${strategy.address} - no want found for strategy ${index}`);
         }
     }
 

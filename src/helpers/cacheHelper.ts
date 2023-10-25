@@ -1,6 +1,6 @@
 var cache = require('memory-cache');
 import axios from "axios";
-import { IStrategyDto } from "../interfaces/dto/IStrategyDto";
+import { IStrategyDto, IStrategyHarvestLast30Days } from "../interfaces/dto/IStrategyDto";
 import { IVaultDto } from "../interfaces/dto/IVaultDto";
 import Strategy, { IStrategy } from "../models/Strategy";
 import StrategyReport, { IStrategyReport } from "../models/StrategyReport";
@@ -15,20 +15,22 @@ import { sortTimestampByProp } from "./data/sortTimestampByProp";
 import { IUser, User } from "../models/User";
 import { BlockchainEvent, IBlockchainEvent } from "../models/BlockchainEvent";
 import { eventMain } from "./indexer/eventMain";
+import Protocol, { IProtocol } from "../models/Protocol";
 
 export const updateApiCache = async () => {
     console.log("updating api cache")
-    const [vaults, strategies, strategyReports, vaultSnapshots, tokens, chains] = await Promise.all([
+    const [vaults, strategies, strategyReports, vaultSnapshots, tokens, chains, protocols] = await Promise.all([
         Vault.find(),
         Strategy.find(),
         StrategyReport.find().sort({ reportDate: 1 }),
         VaultSnapshot.find().sort({ timestamp: 1 }),
         getTokensWithUsdValues(),
-        Chain.find()
+        Chain.find(),
+        Protocol.find()
     ]);
 
     const updatedSnapshots = await updateVaultsnapshotCache(vaultSnapshots, tokens, vaults);
-    updateStrategyCache(strategies, strategyReports);
+    updateStrategyCache(strategies, strategyReports, tokens, vaults, protocols);
     updateVaultCache(vaults, tokens, updatedSnapshots);
     updateVaultLastsnapshotDeltas();
     const updatedChains = await updateChainCache(chains);
@@ -117,9 +119,12 @@ const updateVaultsnapshotCache = async (vaultSnapshots: IVaultSnapshot[], tokens
     return snapshots;
 }
 
-const updateStrategyCache = (strategies: IStrategy[], strategyReports: IStrategyReport[]): IStrategyDto[] => {
+const updateStrategyCache = (strategies: IStrategy[], strategyReports: IStrategyReport[], tokens: IToken[], vaults: IVault[], protocols: IProtocol[]): IStrategyDto[] => {
     const plainStrategies = strategies.map((v: any) => v.toObject()) as IStrategy[];
     const strategiesDto = plainStrategies.map(strategy => {
+
+        const vault = vaults.find((x: any) => x.address.toLowerCase() === strategy.vaultAddress.toLowerCase());
+        const protocol = protocols.find((x: any) => x.address.toLowerCase() === strategy.protocolAddress?.toLowerCase());
 
         const currentStrategyReports = strategyReports.filter(x => x.strategyAddress.toLowerCase() === strategy.address.toLowerCase());
 
@@ -127,9 +132,11 @@ const updateStrategyCache = (strategies: IStrategy[], strategyReports: IStrategy
 
         const dto: IStrategyDto = {
             ...strategy,
+            protocol,
             lastReport: currentStrategyReports[currentStrategyReports.length - 1],
             aprReports: inDateRangeReports,
-            isActive: strategy.allocBPS !== "0"
+            isActive: strategy.allocBPS !== "0",
+            last30daysHarvests: processHarvestsData(inDateRangeReports, tokens, vault)
         }
 
         return dto;
@@ -355,6 +362,50 @@ export const aggregateChainSnapshots = (vaults: IVaultDto[], users: IUser[]): { 
         return sortTimestampByProp(aggregatedData, "timestamp", "asc").slice(-30);
     } catch (error) {
         console.log(error)
+    }
+
+    return [];
+};
+
+const processHarvestsData = (reports: IStrategyReport[], tokens: IToken[], vault?: IVault) => {
+    const reaperToken = tokens.find((x: any) => x.address.toLowerCase() === vault?.token?.toLowerCase()) as IToken;
+
+    if (reports?.length > 0) {
+        // 1. Sort data by reportDate
+        const sortedData = reports.sort((a, b) => a.reportDate! - b.reportDate!);
+
+        // 2. Initialize a result array for 30 days
+        let startDate = Date.now() / 1000 - 30 * 24 * 3600; // 30 days ago in seconds since epoch
+        let results: IStrategyHarvestLast30Days[] = Array.from({ length: 30 }, (_, i) => ({
+            timestamp: startDate + i * 24 * 3600,
+            accumulatedGainValue: 0,
+        }));
+
+        // 3. Accumulate gain over each day
+        let currentGainValue = BigInt(0);
+        let currentGain = 0;
+        let dataIndex = 0;
+        for (let i = 0; i < 30; i++) {
+            let currentDateInSeconds = startDate + i * 24 * 3600;
+            while (
+                dataIndex < sortedData.length &&
+                sortedData[dataIndex].reportDate! <= currentDateInSeconds
+            ) {
+                const netGain = BigInt(sortedData[dataIndex].gain) - BigInt(sortedData[dataIndex].loss);
+                currentGainValue += netGain;
+                dataIndex++;
+            }
+            results[i].accumulatedGain = currentGainValue.toString();
+
+            if (reaperToken) {
+                const accumulatedGainUnits = ethers.formatUnits(currentGainValue.toString(), vault?.decimals);
+                const accumulatedGainValue = Number(accumulatedGainUnits);
+
+                results[i].accumulatedGainValue = accumulatedGainValue * reaperToken.usd
+            }
+        }
+
+        return results;
     }
 
     return [];

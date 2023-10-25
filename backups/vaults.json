@@ -1,26 +1,5 @@
 [
   {
-    "_id": "64f896bb92702d78fe7d1b3d",
-    "address": "0x1bAd45E92DCe078Cf68C2141CD34f54A02c92806",
-    "chainId": 10,
-    "startingBlock": 97394355,
-    "dataFetched": true,
-    "name": "wETH Multi-Strategy",
-    "symbol": "rf-wETH",
-    "asset": "0x4200000000000000000000000000000000000006",
-    "constructionTime": 1683793797,
-    "token": "0x4200000000000000000000000000000000000006",
-    "decimals": 18,
-    "__v": 0
-  },
-  {
-    "_id": "64f8922492702d78fe7d1b3a",
-    "address": "0x963ffcd14D471E279245eE1570ad64ca78d8e67E",
-    "chainId": 250,
-    "startingBlock": 59733463,
-    "__v": 0
-  },
-  {
     "_id": "64f896d892702d78fe7d1b41",
     "address": "0x51868bb8b71FB423B87129908Fa039B880C8612d",
     "chainId": 10,
@@ -35,10 +14,17 @@
     "__v": 0
   },
   {
-    "_id": "64f896ea92702d78fe7d1b44",
-    "address": "0x1364e70960e60A15Ca5a9214C338149f298AaCdE",
-    "chainId": 42161,
-    "startingBlock": 105861154,
+    "_id": "64f8922492702d78fe7d1b3a",
+    "address": "0x963ffcd14D471E279245eE1570ad64ca78d8e67E",
+    "chainId": 250,
+    "startingBlock": 59733463,
+    "dataFetched": true,
+    "name": "WFTM Multi-Strategy Vault",
+    "symbol": "rf-WFTM",
+    "asset": "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83",
+    "constructionTime": 1681315345,
+    "token": "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83",
+    "decimals": 18,
     "__v": 0
   },
   {
@@ -56,16 +42,58 @@
     "__v": 0
   },
   {
-    "_id": "64f896cf92702d78fe7d1b40",
-    "address": "0xc0F5DA4FB484CE6d8a6832819299F7cD0D15726E",
-    "chainId": 10,
-    "startingBlock": 97497800,
+    "_id": "64f896ea92702d78fe7d1b44",
+    "address": "0x1364e70960e60A15Ca5a9214C338149f298AaCdE",
+    "chainId": 42161,
+    "startingBlock": 105861154,
     "dataFetched": true,
-    "name": "DAI Multi-Strategy",
-    "symbol": "rf-DAI",
-    "asset": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
-    "constructionTime": 1683829619,
-    "token": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+    "name": "USDC Multi-Strategy Vault",
+    "symbol": "rf-USDC",
+    "asset": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+    "constructionTime": 1687977284,
+    "token": "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+    "decimals": 6,
+    "__v": 0
+  },
+  {
+    "_id": "652556354dc91247a280ab8a",
+    "address": "0x1225c53F510877074d0D1Bace26C4f0581c24cF7",
+    "chainId": 10,
+    "startingBlock": 84419622,
+    "dataFetched": true,
+    "name": "Ethos Reserve wETH Vault",
+    "symbol": "ethos-wETH",
+    "asset": "0x4200000000000000000000000000000000000006",
+    "constructionTime": 1680036103,
+    "token": "0x4200000000000000000000000000000000000006",
+    "decimals": 18,
+    "__v": 0
+  },
+  {
+    "_id": "64f896bb92702d78fe7d1b3d",
+    "address": "0x1bAd45E92DCe078Cf68C2141CD34f54A02c92806",
+    "chainId": 10,
+    "startingBlock": 97394355,
+    "dataFetched": true,
+    "name": "wETH Multi-Strategy",
+    "symbol": "rf-wETH",
+    "asset": "0x4200000000000000000000000000000000000006",
+    "constructionTime": 1683793797,
+    "token": "0x4200000000000000000000000000000000000006",
+    "decimals": 18,
+    "__v": 0
+  },
+  {
+    "_id": "64f8970092702d78fe7d1b47",
+    "address": "0x84A1f97Fd7585E93aefc97025FEb0e3ef3b54f60",
+    "chainId": 42161,
+    "startingBlock": 103509099,
+    "dataFetched": true,
+    "name": "WETH Multi-Strategy Vault",
+    "symbol": "rf-WETH",
+    "asset": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+    "constructionTime": 1687371210,
+    "token": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
     "decimals": 18,
     "__v": 0
   },
@@ -98,24 +126,17 @@
     "__v": 0
   },
   {
-    "_id": "64f896de92702d78fe7d1b42",
-    "address": "0xB19F4d65882F6C103C332F0BC012354548e9cE0e",
+    "_id": "652556014dc91247a280ab89",
+    "address": "0xef82200DC96a14af76f5fB7f27DbaDB5228f6A0C",
     "chainId": 10,
-    "startingBlock": 97503633,
+    "startingBlock": 84430128,
     "dataFetched": true,
-    "name": "wstETH Multi-Strategy",
-    "symbol": "rf-wstETH",
-    "asset": "0x1F32b1c2345538c0c6f582fCB022739c4A194Ebb",
-    "constructionTime": 1683832654,
-    "token": "0x1F32b1c2345538c0c6f582fCB022739c4A194Ebb",
-    "decimals": 18,
-    "__v": 0
-  },
-  {
-    "_id": "64f8970092702d78fe7d1b47",
-    "address": "0x84A1f97Fd7585E93aefc97025FEb0e3ef3b54f60",
-    "chainId": 42161,
-    "startingBlock": 103509099,
+    "name": "Ethos Reserve wBTC Vault",
+    "symbol": "ethos-wBTC",
+    "asset": "0x68f180fcCe6836688e9084f035309E29Bf0A2095",
+    "constructionTime": 1680041368,
+    "token": "0x68f180fcCe6836688e9084f035309E29Bf0A2095",
+    "decimals": 8,
     "__v": 0
   },
   {
@@ -133,17 +154,31 @@
     "__v": 0
   },
   {
-    "_id": "64f896fa92702d78fe7d1b46",
-    "address": "0x3E9d19c8fdeE09C7AeB9eFFEEf74CcF5131bCF58",
-    "chainId": 42161,
-    "startingBlock": 103508526,
-    "__v": 0
-  },
-  {
     "_id": "64f896f292702d78fe7d1b45",
     "address": "0x06B5f3dbf5f0483E533421cD7c48b28EA1CfED34",
     "chainId": 42161,
     "startingBlock": 103508429,
+    "dataFetched": true,
+    "name": "DAI Multi-Strategy Vault",
+    "symbol": "rf-DAI",
+    "asset": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+    "constructionTime": 1687371040,
+    "token": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+    "decimals": 18,
+    "__v": 0
+  },
+  {
+    "_id": "64f896cf92702d78fe7d1b40",
+    "address": "0xc0F5DA4FB484CE6d8a6832819299F7cD0D15726E",
+    "chainId": 10,
+    "startingBlock": 97497800,
+    "dataFetched": true,
+    "name": "DAI Multi-Strategy",
+    "symbol": "rf-DAI",
+    "asset": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+    "constructionTime": 1683829619,
+    "token": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+    "decimals": 18,
     "__v": 0
   },
   {
@@ -151,33 +186,12 @@
     "address": "0x253Eb67FcDFE60d1751acccD6d5A1a1B62baFC89",
     "chainId": 42161,
     "startingBlock": 103508051,
-    "__v": 0
-  },
-  {
-    "_id": "652556014dc91247a280ab89",
-    "address": "0xef82200DC96a14af76f5fB7f27DbaDB5228f6A0C",
-    "chainId": 10,
-    "startingBlock": 84430128,
     "dataFetched": true,
-    "name": "Ethos Reserve wBTC Vault",
-    "symbol": "ethos-wBTC",
-    "asset": "0x68f180fcCe6836688e9084f035309E29Bf0A2095",
-    "constructionTime": 1680041368,
-    "token": "0x68f180fcCe6836688e9084f035309E29Bf0A2095",
-    "decimals": 8,
-    "__v": 0
-  },
-  {
-    "_id": "652556354dc91247a280ab8a",
-    "address": "0x1225c53F510877074d0D1Bace26C4f0581c24cF7",
-    "chainId": 10,
-    "startingBlock": 84419622,
-    "dataFetched": true,
-    "name": "Ethos Reserve wETH Vault",
-    "symbol": "ethos-wETH",
-    "asset": "0x4200000000000000000000000000000000000006",
-    "constructionTime": 1680036103,
-    "token": "0x4200000000000000000000000000000000000006",
+    "name": "ARB Multi-Strategy Vault",
+    "symbol": "rf-ARB",
+    "asset": "0x912CE59144191C1204E64559FE8253a0e49E6548",
+    "constructionTime": 1687370946,
+    "token": "0x912CE59144191C1204E64559FE8253a0e49E6548",
     "decimals": 18,
     "__v": 0
   },
@@ -193,6 +207,34 @@
     "constructionTime": 1680036945,
     "token": "0x4200000000000000000000000000000000000042",
     "decimals": 18,
+    "__v": 0
+  },
+  {
+    "_id": "64f896de92702d78fe7d1b42",
+    "address": "0xB19F4d65882F6C103C332F0BC012354548e9cE0e",
+    "chainId": 10,
+    "startingBlock": 97503633,
+    "dataFetched": true,
+    "name": "wstETH Multi-Strategy",
+    "symbol": "rf-wstETH",
+    "asset": "0x1F32b1c2345538c0c6f582fCB022739c4A194Ebb",
+    "constructionTime": 1683832654,
+    "token": "0x1F32b1c2345538c0c6f582fCB022739c4A194Ebb",
+    "decimals": 18,
+    "__v": 0
+  },
+  {
+    "_id": "64f896fa92702d78fe7d1b46",
+    "address": "0x3E9d19c8fdeE09C7AeB9eFFEEf74CcF5131bCF58",
+    "chainId": 42161,
+    "startingBlock": 103508526,
+    "dataFetched": true,
+    "name": "USDT Multi-Strategy Vault",
+    "symbol": "rf-USDT",
+    "asset": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+    "constructionTime": 1687371065,
+    "token": "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
+    "decimals": 6,
     "__v": 0
   }
 ]

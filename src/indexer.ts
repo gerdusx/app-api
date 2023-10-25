@@ -8,6 +8,8 @@ import { addBlockChainEventsToCache, fetchBlockChainEventsWithCache, fetchVaults
 import Vault, { IVault } from './models/Vault';
 import { getProviderByChain } from './helpers/getProviderByChain';
 import { VaultSnapshot } from './models/VaultSnapshot';
+import Strategy from './models/Strategy';
+import { REAPER_BASE_STRATEGY_V4 } from './abi/ReaperBaseStrategyv4';
 
 dotenv.config();
 
@@ -130,12 +132,12 @@ export const indexBlocks = async (chainId: number) => {
                         const contract = new ethers.Contract(vaultAddress, VAULT_V2_ABI, provider);
 
                         const [totalIdle, totalAllocated, getPricePerFullShare, totalSupply, totalAllocBPS, tvlCap] = await Promise.all([
-                            contract.totalIdle({blockTag: blockNumber}),
-                            contract.totalAllocated({blockTag: blockNumber}),
-                            contract.getPricePerFullShare({blockTag: blockNumber}),
-                            contract.totalSupply({blockTag: blockNumber}),
-                            contract.totalAllocBPS({blockTag: blockNumber}),
-                            contract.tvlCap({blockTag: blockNumber}),
+                            contract.totalIdle({ blockTag: blockNumber }),
+                            contract.totalAllocated({ blockTag: blockNumber }),
+                            contract.getPricePerFullShare({ blockTag: blockNumber }),
+                            contract.totalSupply({ blockTag: blockNumber }),
+                            contract.totalAllocBPS({ blockTag: blockNumber }),
+                            contract.tvlCap({ blockTag: blockNumber }),
                         ])
 
                         const currentSnapshot = await VaultSnapshot.findOne({
@@ -193,6 +195,80 @@ export const indexBlocks = async (chainId: number) => {
             console.log(error.info.error)
             console.log(error.info.payload.params)
         }
+
+    }
+}
+
+export const indexStrategies = async (chainId: number) => {
+    try {
+        const provider = getProviderByChain(chainId);
+
+        if (provider) {
+            const strategies = await Strategy.find({ chainId });
+            const strategyAddresses = strategies.map(strategy => strategy.address.toLowerCase()).slice(0, 1);
+
+            console.log("strategyAddresses", strategyAddresses)
+            await Promise.all(strategyAddresses.map(async strategyAddress => {
+
+                const contract = new ethers.Contract(strategyAddress, REAPER_BASE_STRATEGY_V4, provider);
+
+                // Calling the harvest.staticCall() method
+                const harvestResult = await contract.harvest.staticCall();
+
+                // Log or use the result as required
+                console.log('Harvest Result for strategy', strategyAddress, ':', harvestResult);
+
+                // const currentSnapshot = await VaultSnapshot.findOne({
+                //     timestamp: nowDay,
+                //     vaultAddress: vaultAddress.toLowerCase(),
+                //     chainId
+                // });
+
+                // if (!currentSnapshot) {
+                //     // Create a new snapshot
+                //     const newSnapshot = new VaultSnapshot({
+                //         timestamp: nowDay,
+                //         lastBlockTimestamp: now,
+                //         vaultAddress: vaultAddress.toLowerCase(),
+                //         totalIdle: totalIdle.toString(),
+                //         totalAllocated: totalAllocated.toString(),
+                //         chainId: chainId,
+                //         pricePerFullShare: getPricePerFullShare.toString(),
+                //         totalSupply: totalSupply.toString(),
+                //         totalAllocBPS: totalAllocBPS.toString(),
+                //         tvlCap: tvlCap.toString(),
+                //     });
+
+                //     await newSnapshot.save();
+                // } else {
+                //     // Update existing snapshot
+                //     currentSnapshot.lastBlockTimestamp = now;
+                //     currentSnapshot.totalIdle = totalIdle.toString();
+                //     currentSnapshot.totalAllocated = totalAllocated.toString();
+                //     currentSnapshot.pricePerFullShare = getPricePerFullShare.toString();
+                //     currentSnapshot.totalSupply = totalSupply.toString();
+                //     currentSnapshot.totalAllocBPS = totalAllocBPS.toString();
+                //     currentSnapshot.tvlCap = tvlCap.toString();
+
+                //     await currentSnapshot.save();
+                // }
+
+            }));
+
+            // console.log(`chain ${chainId} - Blocks indexed: ${blocksToIndex[0]} to ${blocksToIndex[blocksToIndex.length - 1]} - blocks indexed - ${blocksToIndex}`);
+
+            // await updateLatestProcessedBlock(chainId, blocksToIndex[blocksToIndex.length - 1], "block");
+
+
+        }
+    } catch (error: any) {
+        console.log(error)
+        // if (error.error?.code === 429) {
+        //     console.log(`Blocks indexed: cpu capacity exceeded`);
+        // } else {
+        //     console.log(error.info.error)
+        //     console.log(error.info.payload.params)
+        // }
 
     }
 }

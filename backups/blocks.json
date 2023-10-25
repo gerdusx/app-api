@@ -2,7 +2,7 @@
   {
     "_id": "650d96200ed9da4c1747fc9c",
     "chainId": 10,
-    "latestBlock": 110879650,
+    "latestBlock": 111201700,
     "blocksToFetch": 1000,
     "handler": "block",
     "blockInterval": 950,
@@ -11,7 +11,41 @@
   {
     "_id": "650c26e71dd50549905938e9",
     "chainId": 10,
-    "latestBlock": 110880511,
+    "latestBlock": 111201931,
+    "blocksToFetch": 2500,
+    "handler": "event",
+    "__v": 0
+  },
+  {
+    "_id": "6530e88fa3d3151458e457d3",
+    "chainId": 250,
+    "latestBlock": 69648236,
+    "blocksToFetch": 2500,
+    "handler": "event",
+    "__v": 0
+  },
+  {
+    "_id": "6530e916a3d3151458e457d4",
+    "chainId": 250,
+    "latestBlock": 69647150,
+    "blocksToFetch": 1000,
+    "handler": "block",
+    "blockInterval": 950,
+    "__v": 0
+  },
+  {
+    "_id": "6530e935a3d3151458e457d5",
+    "chainId": 42161,
+    "latestBlock": 142980600,
+    "blocksToFetch": 3000,
+    "handler": "block",
+    "blockInterval": 2800,
+    "__v": 0
+  },
+  {
+    "_id": "6530e9bea3d3151458e457d8",
+    "chainId": 42161,
+    "latestBlock": 142987755,
     "blocksToFetch": 2500,
     "handler": "event",
     "__v": 0

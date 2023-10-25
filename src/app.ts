@@ -5,7 +5,7 @@ const cors = require('cors');
 
 import { connectToDb } from './db';
 import { fetchVaultsWithCache, fetchTokensWithCache, fetchArkiverDataWithCache, backup, restoreBackup, processEvents } from './utils';
-import { indexBlocks, indexEvents } from './indexer';
+import { indexBlocks, indexEvents, indexStrategies } from './indexer';
 import { BlockchainEvent, IBlockchainEvent } from './models/BlockchainEvent';
 import { eventMain } from './helpers/indexer/eventMain';
 import { balances, createVault, fetchChains, fetchVaults, processEventsHandler, readVault, updateStrategies } from './helpers/routeHandlers';
@@ -51,7 +51,7 @@ const sleep = (milliseconds: number) => {
 // Indexing events every 10 seconds
 cron.schedule('*/3 * * * *', async () => {
     try {
-        const chains = await Chain.find();
+        const chains = await Chain.find({chainId: 10});
 
         for (const chain of chains) {
             await indexEvents(chain.chainId);
@@ -65,7 +65,7 @@ cron.schedule('*/3 * * * *', async () => {
 // Schedule the task to run every 5 seconds
 cron.schedule('*/7 * * * *', async () => {
     try {
-        const chains = await Chain.find();
+        const chains = await Chain.find({chainId: 10});
 
         for (const chain of chains) {
             await indexBlocks(chain.chainId);

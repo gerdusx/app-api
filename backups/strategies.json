@@ -1,6 +1,6 @@
 [
   {
-    "_id": "6527981358f7a1680d118cba",
+    "_id": "65356c94bc1c343f6207e3cd",
     "block": 84421373,
     "address": "0x77fbf86399ed764A084F77B9acCb049F3DbC32d2",
     "chainId": 10,
@@ -11,7 +11,7 @@
     "__v": 0
   },
   {
-    "_id": "6527981358f7a1680d118ced",
+    "_id": "65356c94bc1c343f6207e3fc",
     "block": 84430496,
     "address": "0x0FABf5037879CC56c1f63946C6d0550dC99d3B68",
     "chainId": 10,
@@ -22,18 +22,29 @@
     "__v": 0
   },
   {
-    "_id": "6527981358f7a1680d118cf2",
+    "_id": "65356c94bc1c343f6207e401",
     "block": 84430503,
     "address": "0x8929C3f0ccA2aa8aD28389381A2Ba102E8Ea0A7F",
     "chainId": 10,
     "vaultAddress": "0xef82200DC96a14af76f5fB7f27DbaDB5228f6A0C",
     "dateAdded": 1680041597,
     "feeBPS": "1000",
-    "allocBPS": "7500",
+    "allocBPS": "4500",
     "__v": 0
   },
   {
-    "_id": "6527983158f7a1680d119b8d",
+    "_id": "65356c9fbc1c343f6207ec03",
+    "block": 59734873,
+    "address": "0xeaC9d3DFD1AEa8C27FbA6B1A630d28Ad2a904E6e",
+    "chainId": 250,
+    "vaultAddress": "0x963ffcd14D471E279245eE1570ad64ca78d8e67E",
+    "dateAdded": 1681316916,
+    "feeBPS": "1000",
+    "allocBPS": "0",
+    "__v": 0
+  },
+  {
+    "_id": "65356ce4bc1c343f6207fd74",
     "block": 97404056,
     "address": "0x235de7506F65b4668F20f4eA7A952f6aE6330885",
     "chainId": 10,
@@ -41,12 +52,10 @@
     "dateAdded": 1683797322,
     "feeBPS": "1000",
     "allocBPS": "0",
-    "__v": 0,
-    "cWant": "0x8cD6b19A07d754bF36AdEEE79EDF4F2134a8F571",
-    "protocolAddress": "0x8cD6b19A07d754bF36AdEEE79EDF4F2134a8F571"
+    "__v": 0
   },
   {
-    "_id": "6527983158f7a1680d119b9e",
+    "_id": "65356ce4bc1c343f6207fd87",
     "block": 97405782,
     "address": "0xAEBC1A45F35FdC1066165256Ae64d793fF21BfFD",
     "chainId": 10,
@@ -54,12 +63,10 @@
     "dateAdded": 1683798022,
     "feeBPS": "1000",
     "allocBPS": "0",
-    "__v": 0,
-    "cWant": "0xf7B5965f5C117Eb1B5450187c9DcFccc3C317e8E",
-    "protocolAddress": "0xf7B5965f5C117Eb1B5450187c9DcFccc3C317e8E"
+    "__v": 0
   },
   {
-    "_id": "6527983158f7a1680d119ba5",
+    "_id": "65356ce4bc1c343f6207fd8c",
     "block": 97405868,
     "address": "0x670AEd4270Ff1c284535e59c69340fa0be7425e6",
     "chainId": 10,
@@ -67,12 +74,10 @@
     "dateAdded": 1683798052,
     "feeBPS": "1000",
     "allocBPS": "0",
-    "__v": 0,
-    "cWant": "0x33865E09A572d4F1CC4d75Afc9ABcc5D3d4d867D",
-    "protocolAddress": "0x33865E09A572d4F1CC4d75Afc9ABcc5D3d4d867D"
+    "__v": 0
   },
   {
-    "_id": "6527983158f7a1680d119bf3",
+    "_id": "65356ce5bc1c343f6207fdda",
     "block": 97420720,
     "address": "0x4B15602550A65869cE9A771A43230215a8cd3D1c",
     "chainId": 10,
@@ -80,12 +85,10 @@
     "dateAdded": 1683804735,
     "feeBPS": "1000",
     "allocBPS": "0",
-    "__v": 0,
-    "cWant": "0x8cD6b19A07d754bF36AdEEE79EDF4F2134a8F571",
-    "protocolAddress": "0x8cD6b19A07d754bF36AdEEE79EDF4F2134a8F571"
+    "__v": 0
   },
   {
-    "_id": "6527983158f7a1680d119c2e",
+    "_id": "65356ce5bc1c343f6207fe19",
     "block": 97497023,
     "address": "0xd3b8519E16CfAd624253BF5fF9C658A3502cfA75",
     "chainId": 10,
@@ -93,12 +96,10 @@
     "dateAdded": 1683829273,
     "feeBPS": "1000",
     "allocBPS": "0",
-    "__v": 0,
-    "cWant": "0xEC8FEa79026FfEd168cCf5C627c7f486D77b765F",
-    "protocolAddress": "0xEC8FEa79026FfEd168cCf5C627c7f486D77b765F"
+    "__v": 0
   },
   {
-    "_id": "6527983158f7a1680d119c52",
+    "_id": "65356ce5bc1c343f6207fe3d",
     "block": 97498309,
     "address": "0xAA8E22Ecc2C0534aD49aF3FbE6145Fd5e4Ec9e28",
     "chainId": 10,
@@ -106,12 +107,10 @@
     "dateAdded": 1683829863,
     "feeBPS": "1000",
     "allocBPS": "0",
-    "__v": 0,
-    "cWant": "0x5569b83de187375d43FBd747598bfe64fC8f6436",
-    "protocolAddress": "0x5569b83de187375d43FBd747598bfe64fC8f6436"
+    "__v": 0
   },
   {
-    "_id": "6527983158f7a1680d119c84",
+    "_id": "65356ce5bc1c343f6207fe6f",
     "block": 97499995,
     "address": "0xB7e3Ac46877C58E94380cb11F71867CB3e54df56",
     "chainId": 10,
@@ -119,12 +118,10 @@
     "dateAdded": 1683830739,
     "feeBPS": "1000",
     "allocBPS": "0",
-    "__v": 0,
-    "cWant": "0x5Ff29E4470799b982408130EFAaBdeeAE7f66a10",
-    "protocolAddress": "0x5Ff29E4470799b982408130EFAaBdeeAE7f66a10"
+    "__v": 0
   },
   {
-    "_id": "6527983158f7a1680d119caf",
+    "_id": "65356ce5bc1c343f6207fe9a",
     "block": 97504210,
     "address": "0x139C6A31C852d11b22470c7ee3F6f0BEa04411a8",
     "chainId": 10,
@@ -132,25 +129,21 @@
     "dateAdded": 1683832928,
     "feeBPS": "1000",
     "allocBPS": "0",
-    "__v": 0,
-    "cWant": "0x26AaB17f27CD1c8d06a0Ad8E4a1Af8B1032171d5",
-    "protocolAddress": "0x26AaB17f27CD1c8d06a0Ad8E4a1Af8B1032171d5"
+    "__v": 0
   },
   {
-    "_id": "6527984e58f7a1680d11a741",
+    "_id": "65356d20bc1c343f6208163e",
     "block": 103008356,
     "address": "0x10eAC0A3579a482B1B4Fb9eedd16a7E0a19dCB07",
     "chainId": 10,
     "vaultAddress": "0xef82200DC96a14af76f5fB7f27DbaDB5228f6A0C",
     "dateAdded": 1685473057,
     "feeBPS": "0",
-    "allocBPS": "2000",
-    "__v": 0,
-    "cWant": "0x33865E09A572d4F1CC4d75Afc9ABcc5D3d4d867D",
-    "protocolAddress": "0x33865E09A572d4F1CC4d75Afc9ABcc5D3d4d867D"
+    "allocBPS": "5000",
+    "__v": 0
   },
   {
-    "_id": "6527984e58f7a1680d11a746",
+    "_id": "65356d20bc1c343f62081643",
     "block": 103008356,
     "address": "0x1147d12648AF6B60c831Aa8564aD5BBaB17749a9",
     "chainId": 10,
@@ -158,12 +151,10 @@
     "dateAdded": 1685473057,
     "feeBPS": "0",
     "allocBPS": "9000",
-    "__v": 0,
-    "cWant": "0x8cD6b19A07d754bF36AdEEE79EDF4F2134a8F571",
-    "protocolAddress": "0x8cD6b19A07d754bF36AdEEE79EDF4F2134a8F571"
+    "__v": 0
   },
   {
-    "_id": "6527984e58f7a1680d11a750",
+    "_id": "65356d20bc1c343f62081653",
     "block": 103008356,
     "address": "0xab3009aA9aA054325eF95BbDb250582AFF2E33C8",
     "chainId": 10,
@@ -171,12 +162,10 @@
     "dateAdded": 1685473057,
     "feeBPS": "0",
     "allocBPS": "500",
-    "__v": 0,
-    "cWant": "0xf7B5965f5C117Eb1B5450187c9DcFccc3C317e8E",
-    "protocolAddress": "0xf7B5965f5C117Eb1B5450187c9DcFccc3C317e8E"
+    "__v": 0
   },
   {
-    "_id": "6527984f58f7a1680d11a8e2",
+    "_id": "65356d2abc1c343f62081ad9",
     "block": 103638486,
     "address": "0xE5BD15Ef9c2F232D342Aa9B422E67a96E0601002",
     "chainId": 10,
@@ -187,40 +176,7 @@
     "__v": 0
   },
   {
-    "_id": "6527984f58f7a1680d11a8e7",
-    "block": 103638486,
-    "address": "0x9DE1d18E23F052685Ce6d2b17806753a49dcf15A",
-    "chainId": 10,
-    "vaultAddress": "0x51868bb8b71FB423B87129908Fa039B880C8612d",
-    "dateAdded": 1685644320,
-    "feeBPS": "0",
-    "allocBPS": "1000",
-    "__v": 0
-  },
-  {
-    "_id": "6527984f58f7a1680d11a8ec",
-    "block": 103638486,
-    "address": "0x048D6eb8a0Fd322a1b0519fe772ae534f773C478",
-    "chainId": 10,
-    "vaultAddress": "0xc0F5DA4FB484CE6d8a6832819299F7cD0D15726E",
-    "dateAdded": 1685644320,
-    "feeBPS": "0",
-    "allocBPS": "500",
-    "__v": 0
-  },
-  {
-    "_id": "6527984f58f7a1680d11a8f1",
-    "block": 103638486,
-    "address": "0x874933D799C7c2d5A156D634d286CD01F9523CAa",
-    "chainId": 10,
-    "vaultAddress": "0xcecd29559A84e4d4F6467b36BbD4B9c3e6B89771",
-    "dateAdded": 1685644320,
-    "feeBPS": "0",
-    "allocBPS": "500",
-    "__v": 0
-  },
-  {
-    "_id": "6527984f58f7a1680d11a8f6",
+    "_id": "65356d2abc1c343f62081ade",
     "block": 103638486,
     "address": "0x014b152FcAcF6069803f67d9379A693A219869f6",
     "chainId": 10,
@@ -231,18 +187,29 @@
     "__v": 0
   },
   {
-    "_id": "6527984f58f7a1680d11a8fb",
+    "_id": "65356d2abc1c343f62081ae3",
     "block": 103638486,
     "address": "0xD2BA06b50AEEd06BE5bcD85Cc8718213F8902f3e",
     "chainId": 10,
     "vaultAddress": "0xB19F4d65882F6C103C332F0BC012354548e9cE0e",
     "dateAdded": 1685644320,
     "feeBPS": "0",
-    "allocBPS": "500",
+    "allocBPS": "7500",
     "__v": 0
   },
   {
-    "_id": "6527984f58f7a1680d11a900",
+    "_id": "65356d2abc1c343f62081ae8",
+    "block": 103638486,
+    "address": "0x9DE1d18E23F052685Ce6d2b17806753a49dcf15A",
+    "chainId": 10,
+    "vaultAddress": "0x51868bb8b71FB423B87129908Fa039B880C8612d",
+    "dateAdded": 1685644320,
+    "feeBPS": "0",
+    "allocBPS": "1000",
+    "__v": 0
+  },
+  {
+    "_id": "65356d2abc1c343f62081aed",
     "block": 103638486,
     "address": "0xdf6fb75B468860aA3343D69b19a2Dc004A416DEC",
     "chainId": 10,
@@ -253,7 +220,95 @@
     "__v": 0
   },
   {
-    "_id": "652798a958f7a1680d11d446",
+    "_id": "65356d2abc1c343f62081af2",
+    "block": 103638486,
+    "address": "0x048D6eb8a0Fd322a1b0519fe772ae534f773C478",
+    "chainId": 10,
+    "vaultAddress": "0xc0F5DA4FB484CE6d8a6832819299F7cD0D15726E",
+    "dateAdded": 1685644320,
+    "feeBPS": "0",
+    "allocBPS": "500",
+    "__v": 0
+  },
+  {
+    "_id": "65356d2abc1c343f62081af7",
+    "block": 103638486,
+    "address": "0x874933D799C7c2d5A156D634d286CD01F9523CAa",
+    "chainId": 10,
+    "vaultAddress": "0xcecd29559A84e4d4F6467b36BbD4B9c3e6B89771",
+    "dateAdded": 1685644320,
+    "feeBPS": "0",
+    "allocBPS": "500",
+    "__v": 0
+  },
+  {
+    "_id": "65356d35bc1c343f6208207b",
+    "block": 63832236,
+    "address": "0x88dDaE2aC89F2554b685c29c7f0c85E3F070b934",
+    "chainId": 250,
+    "vaultAddress": "0x963ffcd14D471E279245eE1570ad64ca78d8e67E",
+    "dateAdded": 1686338785,
+    "feeBPS": "1000",
+    "allocBPS": "10000",
+    "__v": 0
+  },
+  {
+    "_id": "65356d7abc1c343f62083f7b",
+    "block": 105858583,
+    "address": "0x3238E46312F18B012DdF3116D0AA4C4eefA7dD99",
+    "chainId": 42161,
+    "vaultAddress": "0x253Eb67FcDFE60d1751acccD6d5A1a1B62baFC89",
+    "dateAdded": 1687976628,
+    "feeBPS": "1000",
+    "allocBPS": "10000",
+    "__v": 0
+  },
+  {
+    "_id": "65356d7abc1c343f62083f80",
+    "block": 105859782,
+    "address": "0xc403D44bdAA372F4493d23aD6BeB0718428F96FF",
+    "chainId": 42161,
+    "vaultAddress": "0x06B5f3dbf5f0483E533421cD7c48b28EA1CfED34",
+    "dateAdded": 1687976936,
+    "feeBPS": "1000",
+    "allocBPS": "10000",
+    "__v": 0
+  },
+  {
+    "_id": "65356d7abc1c343f62083f85",
+    "block": 105859996,
+    "address": "0x3B3EebffF40C69DFd11ffF3894f5413617B2bf36",
+    "chainId": 42161,
+    "vaultAddress": "0x3E9d19c8fdeE09C7AeB9eFFEEf74CcF5131bCF58",
+    "dateAdded": 1687976988,
+    "feeBPS": "1000",
+    "allocBPS": "10000",
+    "__v": 0
+  },
+  {
+    "_id": "65356d7abc1c343f62083f8a",
+    "block": 105860048,
+    "address": "0xef2DE9c31BB3b760CaEF68757F6E9b9373b573C5",
+    "chainId": 42161,
+    "vaultAddress": "0x84A1f97Fd7585E93aefc97025FEb0e3ef3b54f60",
+    "dateAdded": 1687977002,
+    "feeBPS": "1000",
+    "allocBPS": "10000",
+    "__v": 0
+  },
+  {
+    "_id": "65356d7abc1c343f62083fb7",
+    "block": 105862010,
+    "address": "0x89aD5b5BDb8BB4426CBe764eF5122BEd415922f3",
+    "chainId": 42161,
+    "vaultAddress": "0x1364e70960e60A15Ca5a9214C338149f298AaCdE",
+    "dateAdded": 1687977504,
+    "feeBPS": "1000",
+    "allocBPS": "10000",
+    "__v": 0
+  },
+  {
+    "_id": "65356db7bc1c343f62085d3a",
     "block": 106796156,
     "address": "0x766Da60CC688E45B5948F05cb947D3B8Df7274f5",
     "chainId": 10,
@@ -264,7 +319,7 @@
     "__v": 0
   },
   {
-    "_id": "652798c658f7a1680d11df93",
+    "_id": "65356ddebc1c343f62086ae5",
     "block": 107138726,
     "address": "0x4926B7Eb0EA979F944B5957d6a01e88Da0fBC807",
     "chainId": 10,
@@ -272,25 +327,10 @@
     "dateAdded": 1689876229,
     "feeBPS": "1000",
     "allocBPS": "6500",
-    "__v": 0,
-    "cWant": "0xf7B5965f5C117Eb1B5450187c9DcFccc3C317e8E",
-    "protocolAddress": "0xf7B5965f5C117Eb1B5450187c9DcFccc3C317e8E"
+    "__v": 0
   },
   {
-    "_id": "652798c658f7a1680d11df98",
-    "block": 107138726,
-    "address": "0x0a2E33f6bC06Bc833175f6D329D30bC18f79d4d7",
-    "chainId": 10,
-    "vaultAddress": "0x51868bb8b71FB423B87129908Fa039B880C8612d",
-    "dateAdded": 1689876229,
-    "feeBPS": "1000",
-    "allocBPS": "9000",
-    "__v": 0,
-    "cWant": "0x5Ff29E4470799b982408130EFAaBdeeAE7f66a10",
-    "protocolAddress": "0x5Ff29E4470799b982408130EFAaBdeeAE7f66a10"
-  },
-  {
-    "_id": "652798c658f7a1680d11df9d",
+    "_id": "65356ddebc1c343f62086aea",
     "block": 107138726,
     "address": "0x03e8686EfE195f036845498AEb2125c626aD949b",
     "chainId": 10,
@@ -298,12 +338,21 @@
     "dateAdded": 1689876229,
     "feeBPS": "1000",
     "allocBPS": "9500",
-    "__v": 0,
-    "cWant": "0x5569b83de187375d43FBd747598bfe64fC8f6436",
-    "protocolAddress": "0x5569b83de187375d43FBd747598bfe64fC8f6436"
+    "__v": 0
   },
   {
-    "_id": "652798c658f7a1680d11dfa2",
+    "_id": "65356ddebc1c343f62086aef",
+    "block": 107138726,
+    "address": "0x0a2E33f6bC06Bc833175f6D329D30bC18f79d4d7",
+    "chainId": 10,
+    "vaultAddress": "0x51868bb8b71FB423B87129908Fa039B880C8612d",
+    "dateAdded": 1689876229,
+    "feeBPS": "1000",
+    "allocBPS": "9000",
+    "__v": 0
+  },
+  {
+    "_id": "65356ddebc1c343f62086af4",
     "block": 107138726,
     "address": "0xf38CF4C1644098D819Df230b7cc7B9Fb13b4f323",
     "chainId": 10,
@@ -311,12 +360,10 @@
     "dateAdded": 1689876229,
     "feeBPS": "1000",
     "allocBPS": "9500",
-    "__v": 0,
-    "cWant": "0x8cD6b19A07d754bF36AdEEE79EDF4F2134a8F571",
-    "protocolAddress": "0x8cD6b19A07d754bF36AdEEE79EDF4F2134a8F571"
+    "__v": 0
   },
   {
-    "_id": "652798c658f7a1680d11dfa7",
+    "_id": "65356ddebc1c343f62086af9",
     "block": 107138726,
     "address": "0x3CADe4676898109Cc09434c51f9D5CA21Bb32a15",
     "chainId": 10,
@@ -324,25 +371,21 @@
     "dateAdded": 1689876229,
     "feeBPS": "1000",
     "allocBPS": "8000",
-    "__v": 0,
-    "cWant": "0xEC8FEa79026FfEd168cCf5C627c7f486D77b765F",
-    "protocolAddress": "0xEC8FEa79026FfEd168cCf5C627c7f486D77b765F"
+    "__v": 0
   },
   {
-    "_id": "652798c658f7a1680d11dfac",
+    "_id": "65356ddebc1c343f62086afe",
     "block": 107138726,
     "address": "0x12D15E0b690c7E198b318B3bF7c00526E38c9676",
     "chainId": 10,
     "vaultAddress": "0xB19F4d65882F6C103C332F0BC012354548e9cE0e",
     "dateAdded": 1689876229,
     "feeBPS": "1000",
-    "allocBPS": "9500",
-    "__v": 0,
-    "cWant": "0x26AaB17f27CD1c8d06a0Ad8E4a1Af8B1032171d5",
-    "protocolAddress": "0x26AaB17f27CD1c8d06a0Ad8E4a1Af8B1032171d5"
+    "allocBPS": "2500",
+    "__v": 0
   },
   {
-    "_id": "652798c658f7a1680d11dfb1",
+    "_id": "65356ddebc1c343f62086b03",
     "block": 107138726,
     "address": "0xC77A6814E1Ee8d5d8ce925CFb78425F565Fb45b1",
     "chainId": 10,
@@ -350,12 +393,10 @@
     "dateAdded": 1689876229,
     "feeBPS": "1000",
     "allocBPS": "10000",
-    "__v": 0,
-    "cWant": "0x33865E09A572d4F1CC4d75Afc9ABcc5D3d4d867D",
-    "protocolAddress": "0x33865E09A572d4F1CC4d75Afc9ABcc5D3d4d867D"
+    "__v": 0
   },
   {
-    "_id": "6527995d58f7a1680d1220f3",
+    "_id": "65356e89bc1c343f6208b603",
     "block": 108385855,
     "address": "0xFBD08A6869D3e4EC8A21895c1e269f4b980813f0",
     "chainId": 10,
