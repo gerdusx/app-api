@@ -391,7 +391,7 @@ const processHarvestsData = (reports: IStrategyReport[], tokens: IToken[], vault
 
     // Initialize a result array for 30 days
     let startDate = Date.now() / 1000 - 30 * 24 * 3600; // 30 days ago in seconds since epoch
-    let results: IStrategyHarvestLast30Days[] = Array.from({ length: 30 }, (_, i) => ({
+    let results: IStrategyHarvestLast30Days[] = Array.from({ length: 31 }, (_, i) => ({
         timestamp: startDate + i * 24 * 3600,
         accumulatedGainValue: 0,
         accumulatedGain: "0" // assuming accumulatedGain is a string based on your code
@@ -404,7 +404,7 @@ const processHarvestsData = (reports: IStrategyReport[], tokens: IToken[], vault
         // 2. Accumulate gain over each day
         let currentGainValue = BigInt(0);
         let dataIndex = 0;
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 31; i++) {
             let currentDateInSeconds = startDate + i * 24 * 3600;
             while (
                 dataIndex < sortedData.length &&
