@@ -9,4 +9,5 @@ export interface IVaultDto extends IVault {
     strategies: IStrategyDto[];
     lastSnapShot: IVaultSnapshotDto;
     last30SnapShots: IVaultSnapshotDto[];
+    last30daysHarvestProfit?: number,
 }

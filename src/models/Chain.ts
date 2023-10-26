@@ -4,6 +4,7 @@ import { ISnapshot_Delta } from '../interfaces/dto/IVaultSnapshotDto';
 export interface IChain {
     _id: string;
     chainId: number;
+    etherscanUrl: string;
     name?: string;
     last30SnapShots?: { timestamp: number; tvl: number; totalUsers: number }[];
     lastSnapShotDelta?: {
@@ -14,7 +15,8 @@ export interface IChain {
 
 const chainSchema = new mongoose.Schema({
     chainId: Number,
-    name: String
+    name: String,
+    etherscanUrl: String
 });
 
 const Chain = mongoose.model<IChain>('Chain', chainSchema);

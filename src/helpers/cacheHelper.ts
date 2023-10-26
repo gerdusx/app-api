@@ -59,12 +59,18 @@ const updateVaultCache = (vaults: IVault[], tokens: IToken[], vaultSnapshotsCach
 
         const lastSnapShot = currentVaultSnapshots[currentVaultSnapshots.length - 1];
 
+        //calculate profits from strategies' harvest
+        const strategiesProfit = currentVaultStrategies.reduce((acc: any, strategy: IStrategyDto) => {
+            return acc + strategy.last30daysHarvestProfit;
+        }, 0);
+
         const dto: IVaultDto = {
             ...vault,
             tokenDto: currentVaultToken,
             strategies: currentVaultStrategies,
             last30SnapShots: currentVaultSnapshots.slice(-30),
-            lastSnapShot
+            lastSnapShot,
+            last30daysHarvestProfit: strategiesProfit
         }
 
         return dto;
