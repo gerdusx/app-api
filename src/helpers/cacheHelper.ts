@@ -160,7 +160,19 @@ const updateChainCache = async (chains: IChain[]) => {
         const users = await User.find();
         const vaults = cache.get('vaults') as IVaultDto[];
         const plainChains = chains.map((v: any) => v.toObject()) as IChain[];
-        const plainUsers = users.map((v: any) => v.toObject()) as IUser[];
+
+        // De-duplicate users based on the address property
+        const seenAddresses = new Set();
+        const uniqueUsers = users.filter((user: any) => {
+            const address = user.address.toLowerCase();
+            if (!seenAddresses.has(address)) {
+                seenAddresses.add(address);
+                return true;
+            }
+            return false;
+        });
+
+        const plainUsers = uniqueUsers.map((v: any) => v.toObject()) as IUser[];
 
         for (const chain of plainChains) {
             const chainVaults = vaults.filter(x => x.chainId === chain.chainId);
@@ -173,7 +185,6 @@ const updateChainCache = async (chains: IChain[]) => {
     } catch (error) {
         console.log(error)
     }
-
 }
 
 export const updateTokensCache = async () => {
@@ -362,7 +373,6 @@ export const aggregateChainSnapshots = (vaults: IVaultDto[], users: IUser[]): { 
             }
 
             acc[snapshot.timestamp].tvl += snapshot.usd?.tvl || 0;
-            acc[snapshot.timestamp].totalUsers += snapshot.users?.totalUsers || 0;
             return acc;
         }, {});
 
