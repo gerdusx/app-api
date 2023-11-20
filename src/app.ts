@@ -49,7 +49,7 @@ const sleep = (milliseconds: number) => {
 }
 
 // Indexing events every 10 seconds
-cron.schedule('*/3 * * * *', async () => {
+cron.schedule('*/6 * * * *', async () => {
     try {
         const chains = await Chain.find({chainId: 10});
 
@@ -63,7 +63,7 @@ cron.schedule('*/3 * * * *', async () => {
 });
 
 // Schedule the task to run every 5 seconds
-cron.schedule('*/7 * * * *', async () => {
+cron.schedule('*/8 * * * *', async () => {
     try {
         const chains = await Chain.find({chainId: 10});
 
@@ -80,7 +80,7 @@ cron.schedule('*/7 * * * *', async () => {
 
 
 //Processing saved events every 5mins
-cron.schedule('*/1 * * * *', async () => {
+cron.schedule('*/5 * * * *', async () => {
     try {
         const reset = false;
         if (reset) {
@@ -114,7 +114,7 @@ cron.schedule('*/1 * * * *', async () => {
 });
 
 // Schedule the task to run every 5 seconds - update tokens
-cron.schedule('*/5 * * * *', async () => {
+cron.schedule('*/20 * * * *', async () => {
     try {
         updateTokensCache();
     } catch (error) {
