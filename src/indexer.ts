@@ -22,7 +22,7 @@ export const indexEvents = async (chainId: number) => {
 
         if (provider) {
             const vaults = await Vault.find() as IVault[];
-            const vaultAddresses = vaults.filter(x => x.chainId === chainId).map(vault => vault.address.toLowerCase());
+            const vaultAddresses = vaults.filter(x => x.chainId === chainId && x.inSync).map(vault => vault.address.toLowerCase());
 
             //let nextBlock = cache.get(`eventHandler:${chainId}`);
             const processedBlock = await getLatestProcessedBlock(chainId, "event");
@@ -104,7 +104,7 @@ export const indexBlocks = async (chainId: number) => {
 
         if (provider) {
             const vaults = (await fetchVaultsFromCacheOrDb()).filter(x => x.chainId === chainId);
-            const vaultAddresses = vaults.filter(x => x.chainId === chainId).map(vault => vault.address.toLowerCase());
+            const vaultAddresses = vaults.filter(x => x.chainId === chainId && x.inSync).map(vault => vault.address.toLowerCase());
             const processedBlock = await getLatestProcessedBlock(chainId, "block");
 
             const startBlock = processedBlock.latestBlock;

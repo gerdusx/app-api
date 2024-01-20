@@ -11,6 +11,7 @@ export interface IVault {
     constructionTime?: number;
     token?: string;
     decimals?: number;
+    inSync?: boolean,
 }
 
 const VaultSchema = new mongoose.Schema({
@@ -24,6 +25,7 @@ const VaultSchema = new mongoose.Schema({
     constructionTime: Number,
     token: String,
     decimals: Number,
+    inSync: Boolean,
 });
 
 const Vault = mongoose.model<IVault>('Vault', VaultSchema);
