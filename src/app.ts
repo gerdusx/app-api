@@ -54,7 +54,7 @@ cron.schedule('*/6 * * * *', async () => {
         const chains = await Chain.find({chainId: 10});
 
         for (const chain of chains) {
-            await indexEvents(chain.chainId);
+            await indexEvents(chain.chainId, true);
             await sleep(3000);
         }
     } catch (error) {
