@@ -53,7 +53,7 @@ export const createVault = async (req: Request, res: Response) => {
                 dataFetched: false
             }
             vault = await Vault.create(newVault);
-            await indexEvents(chainId);
+            await indexEvents(chainId, true);
             await updateApiCache();
             return res.status(201).json(vault); // Return the created vault with a 201 status code
         }
@@ -260,7 +260,7 @@ export const fetchTokens = async (req: Request, res: Response) => {
 export const processEventsHandler = async (req: Request, res: Response) => {
     try {
         const chainId = 10; // or whichever chainId you want to index
-        await indexEvents(chainId);
+        await indexEvents(chainId, true);
         const response = await processEvents();
         await updateApiCache();
 
