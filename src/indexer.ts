@@ -84,7 +84,7 @@ export const indexEvents = async (chainId: number, inSync: boolean) => {
 
             await updateLatestProcessedBlock(chainId, endBlock, inSync ? "event" : "event-outSync");
 
-            console.log(`chain: ${chainId} - ${startBlock} to ${endBlock} - new events: ${eventsToSave.length}, unique events: ${uniqueEventsToSave.length} - cached events: ${cachedEvents.length} (#blocks: ${endBlock - startBlock})`)
+            console.log(`${inSync ? "event" : "event-outSync"} - chain: ${chainId} - ${startBlock} to ${endBlock} - new events: ${eventsToSave.length}, unique events: ${uniqueEventsToSave.length} - cached events: ${cachedEvents.length} (#blocks: ${endBlock - startBlock})`)
         } else {
             console.log("No provider found")
         }

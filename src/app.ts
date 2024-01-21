@@ -62,6 +62,20 @@ cron.schedule('*/6 * * * *', async () => {
     }
 });
 
+// // Indexing out of sync vaults' events every 10 seconds
+// cron.schedule('*/10 * * * * *', async () => {
+//     try {
+//         const chains = await Chain.find({chainId: 10});
+
+//         for (const chain of chains) {
+//             await indexEvents(chain.chainId, false);
+//             await sleep(3000);
+//         }
+//     } catch (error) {
+//         console.error('Error in cron job:', error);
+//     }
+// });
+
 // Schedule the task to run every 5 seconds
 cron.schedule('*/8 * * * *', async () => {
     try {
