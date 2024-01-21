@@ -336,7 +336,7 @@ export const addBlockChainEventsToCache = async (newEvents: any[]) => {
     }
 };
 
-export const getLatestProcessedBlock = async (chainId: number, handler: "event" | "block"): Promise<IProcessedBlock> => {
+export const getLatestProcessedBlock = async (chainId: number, handler: "event" | "event-outSync"| "block"): Promise<IProcessedBlock> => {
     return await ProcessedBlock.findOne({ chainId, handler }) as IProcessedBlock;
 }
 

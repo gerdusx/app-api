@@ -15,17 +15,17 @@ dotenv.config();
 
 const contractInterface = new ethers.Interface(VAULT_V2_ABI);
 
-export const indexEvents = async (chainId: number) => {
+export const indexEvents = async (chainId: number, inSync: boolean) => {
 
     try {
         const provider = getProviderByChain(chainId);
 
         if (provider) {
             const vaults = await Vault.find() as IVault[];
-            const vaultAddresses = vaults.filter(x => x.chainId === chainId && x.inSync).map(vault => vault.address.toLowerCase());
+            const vaultAddresses = vaults.filter(x => x.chainId === chainId && x.inSync === inSync).map(vault => vault.address.toLowerCase());
 
             //let nextBlock = cache.get(`eventHandler:${chainId}`);
-            const processedBlock = await getLatestProcessedBlock(chainId, "event");
+            const processedBlock = await getLatestProcessedBlock(chainId, inSync ? "event" : "event-outSync");
 
             const currentBlock = await provider.getBlockNumber();
 
@@ -82,7 +82,7 @@ export const indexEvents = async (chainId: number) => {
                 addBlockChainEventsToCache(uniqueEventsToSave);
             }
 
-            await updateLatestProcessedBlock(chainId, endBlock, "event");
+            await updateLatestProcessedBlock(chainId, endBlock, inSync ? "event" : "event-outSync");
 
             console.log(`chain: ${chainId} - ${startBlock} to ${endBlock} - new events: ${eventsToSave.length}, unique events: ${uniqueEventsToSave.length} - cached events: ${cachedEvents.length} (#blocks: ${endBlock - startBlock})`)
         } else {
