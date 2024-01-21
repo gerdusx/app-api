@@ -9,7 +9,7 @@ import { indexBlocks, indexEvents, indexStrategies } from './indexer';
 import { BlockchainEvent, IBlockchainEvent } from './models/BlockchainEvent';
 import { eventMain } from './helpers/indexer/eventMain';
 import { balances, createVault, fetchChains, fetchVaults, processEventsHandler, readVault, updateStrategies } from './helpers/routeHandlers';
-import { updateApiCache, updateTokensCache } from './helpers/cacheHelper';
+import { updateApiCache, updateTokenUSDValuesAndCache, updateTokensCache } from './helpers/cacheHelper';
 import Chain from './models/Chain';
 
 // Connect to the database
@@ -128,9 +128,9 @@ cron.schedule('*/5 * * * *', async () => {
 });
 
 // Schedule the task to run every 5 seconds - update tokens
-cron.schedule('*/20 * * * *', async () => {
+cron.schedule('*/20 * * * * *', async () => {
     try {
-        updateTokensCache();
+        updateTokenUSDValuesAndCache();
     } catch (error) {
         console.error('Error in cron job:', error);
     }

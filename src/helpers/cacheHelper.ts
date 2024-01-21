@@ -203,12 +203,39 @@ export const updateTokensCache = async () => {
     cache.put('tokens', updatedTokens);
 };
 
+export const updateTokenUSDValuesAndCache = async () => {
+    try {
+        const tokens = await Token.find();
+        const coinIds = tokens.map(token => token.coinId).join(",");
+        let coinGeckoQuery = `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currencies=usd`;
+        const coinsResponse = await axios.get(coinGeckoQuery);
+        const currentTime = Date.now();
+        const updatedTokens: IToken[] = tokens.map(token => {
+            const usdValue = token.coinId ? coinsResponse.data[token.coinId]?.usd : 0;
+            return {
+                ...token.toObject(),
+                usd: usdValue,
+                usdLastUpdated: currentTime
+            }
+        });
+    
+        // Update each token in the database
+        for (const token of updatedTokens) {
+            await Token.updateOne({ _id: token._id }, token);
+        }
+    
+        cache.put('tokens', updatedTokens);
+    } catch (error) {
+        console.log("error updating token usd values and cache")
+    }
+};
+
 
 export const getTokensWithUsdValues = async (): Promise<IToken[]> => {
     let tokens = cache.get('tokens') as IToken[];
     if (!tokens) {
-        updateTokensCache();
-        tokens = cache.get('tokens') as IToken[];
+        tokens = await Token.find();
+        cache.put('tokens', tokens);
     }
     return tokens;
 };
