@@ -143,7 +143,7 @@ const updateStrategyCache = (strategies: IStrategy[], strategyReports: IStrategy
             protocol,
             lastReport: currentStrategyReports[currentStrategyReports.length - 1],
             aprReports: inDateRangeReports,
-            isActive: strategy.allocBPS !== "0",
+            isActive: strategy.allocBPS !== "0" ? true : false,
             last30daysHarvests: harvestData,
             last30daysHarvestProfit: harvestData[harvestData.length - 1].accumulatedGainValue
         }
@@ -153,6 +153,44 @@ const updateStrategyCache = (strategies: IStrategy[], strategyReports: IStrategy
 
     cache.put('strategies', strategiesDto);
     return strategiesDto
+}
+
+export const updateStrategy_Granary_UserReserveData_Cache = (strategy: IStrategy) => {
+    const cacheStrategies = cache.get('strategies') as IStrategy[];
+    const cacheVaults = cache.get('vaults') as IVaultDto[];
+
+    const strategiesDto = cacheStrategies?.map(strat => {
+        if (strategy._id.toString() === strat._id.toString()) {
+            console.log("found strategy to update")
+            return {
+                ...strat,
+                granary: {
+                    userReserveData: strategy.granary?.userReserveData
+                }
+            }
+        }
+
+        return {
+            ...strat
+        }
+    })
+
+    const vaultsDto = cacheVaults?.map(vault => {
+        if (vault.address.toLocaleLowerCase() === strategy.vaultAddress.toLocaleLowerCase()) {
+            const vaultStrategies = strategiesDto.filter(x => x.vaultAddress.toLocaleLowerCase() === vault.address.toLowerCase())
+            return {
+                ...vault,
+                strategies: vaultStrategies
+            }
+        }
+
+        return {
+            ...vault
+        }
+    })
+
+    cache.put('strategies', strategiesDto);
+    cache.put('vaults', vaultsDto);
 }
 
 const updateChainCache = async (chains: IChain[]) => {

@@ -1,7 +1,7 @@
 var cache = require('memory-cache');
 import express, { Request, Response } from 'express';
 import { IVaultDto } from '../interfaces/dto/IVaultDto';
-import { updateApiCache } from './cacheHelper';
+import { updateApiCache, updateStrategy_Granary_UserReserveData_Cache } from './cacheHelper';
 import { IChain } from '../models/Chain';
 import { IToken } from '../models/Token';
 import { ethers } from 'ethers';
@@ -10,7 +10,7 @@ import { getProviderByChain } from './getProviderByChain';
 import Vault, { IVault } from '../models/Vault';
 import { indexBlocks, indexEvents } from '../indexer';
 import { VAULT_V2_ABI } from '../abi/vaultV2Abi';
-import Strategy from '../models/Strategy';
+import Strategy, { IStrategy } from '../models/Strategy';
 import { REAPER_BASE_STRATEGY_V4 } from '../abi/ReaperBaseStrategyv4';
 import { REAPER_STRATEGY_SONNE_V2 } from '../abi/ReaperStrategySonneV2';
 import Protocol, { IProtocol } from '../models/Protocol';
@@ -68,7 +68,7 @@ export const createVault = async (req: Request, res: Response) => {
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const updateStrategies = async (req: Request, res: Response) => {
-    const strategies = await Strategy.find({chainId: 10});
+    const strategies = await Strategy.find({ chainId: 10 });
 
     const abis = [
         REAPER_BASE_STRATEGY_V4,
@@ -119,7 +119,7 @@ export const updateStrategies = async (req: Request, res: Response) => {
                     protocol.name = name;
                     protocol.symbol = symbol;
                     protocol.decimals = decimals.toString();
-                
+
                     await protocol.save();
                 }
 
@@ -144,9 +144,9 @@ export const updateStrategies = async (req: Request, res: Response) => {
                         gWantContract.symbol(),
                         gWantContract.decimals(),
                     ])
-    
+
                     console.log("data: ", name, symbol, decimals)
-    
+
                     let protocol = await Protocol.findOne({ address: gWant });
                     if (!protocol) {
                         const newProtocol = new Protocol({
@@ -157,21 +157,21 @@ export const updateStrategies = async (req: Request, res: Response) => {
                             symbol,
                             decimals: decimals.toString()
                         });
-    
+
                         await newProtocol.save();
                     } else {
                         protocol.name = name;
                         protocol.symbol = symbol;
                         protocol.decimals = decimals.toString();
-                    
+
                         await protocol.save();
                     }
 
                     break;
                 } catch (error) {
-                    
+
                 }
-                
+
             }
 
             await delay(1000);
@@ -183,6 +183,33 @@ export const updateStrategies = async (req: Request, res: Response) => {
     }
 
     res.json("done");
+};
+
+export const updateStrategyUserReserveData = async (req: Request, res: Response) => {
+    try {
+        const strategyId = req.params.strategyId;
+        const postData = req.body;
+
+        // Use updateOne to update the granary.userReserveData property
+        const result = await Strategy.updateOne({ _id: strategyId }, {
+            $set: { 'granary.userReserveData': postData }
+        });
+
+        if (result.modifiedCount === 0) {
+            return res.status(404).json({ error: 'Strategy not found' });
+        }
+
+        const strategy: IStrategy | null = await Strategy.findById(strategyId);
+
+        if (strategy) {
+            updateStrategy_Granary_UserReserveData_Cache(strategy);
+        }
+
+        res.json({ strategyId, postData, strategy });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json(error);
+    }
 };
 
 export const balances = async (req: Request, res: Response) => {
