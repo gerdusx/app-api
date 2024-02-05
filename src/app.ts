@@ -8,7 +8,7 @@ import { fetchVaultsWithCache, fetchTokensWithCache, fetchArkiverDataWithCache, 
 import { indexBlocks, indexEvents, indexStrategies } from './indexer';
 import { BlockchainEvent, IBlockchainEvent } from './models/BlockchainEvent';
 import { eventMain } from './helpers/indexer/eventMain';
-import { balances, createVault, fetchChains, fetchVaults, processEventsHandler, readVault, updateStrategies } from './helpers/routeHandlers';
+import { balances, createVault, fetchChains, fetchVaults, granary, processEventsHandler, readVault, updateStrategies } from './helpers/routeHandlers';
 import { updateApiCache, updateTokenUSDValuesAndCache, updateTokensCache } from './helpers/cacheHelper';
 import Chain from './models/Chain';
 
@@ -38,6 +38,9 @@ app.get('/api/dto/tokens', fetchTokensWithCache);
 app.post('/api/vaults', createVault);
 app.post('/api/balances', balances);
 
+app.post('/api/granary', granary);
+
+
 
 app.post('/api/readvault', readVault);
 app.get('/api/strategies/update', updateStrategies);
@@ -48,27 +51,13 @@ const sleep = (milliseconds: number) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
-// Indexing events every 10 seconds
-cron.schedule('*/6 * * * *', async () => {
-    try {
-        const chains = await Chain.find({chainId: 10});
-
-        for (const chain of chains) {
-            await indexEvents(chain.chainId, true);
-            await sleep(3000);
-        }
-    } catch (error) {
-        console.error('Error in cron job:', error);
-    }
-});
-
-// // Indexing out of sync vaults' events every 10 seconds
-// cron.schedule('*/10 * * * * *', async () => {
+// // Indexing events every 10 seconds
+// cron.schedule('*/6 * * * *', async () => {
 //     try {
 //         const chains = await Chain.find({chainId: 10});
 
 //         for (const chain of chains) {
-//             await indexEvents(chain.chainId, false);
+//             await indexEvents(chain.chainId, true);
 //             await sleep(3000);
 //         }
 //     } catch (error) {
@@ -76,65 +65,79 @@ cron.schedule('*/6 * * * *', async () => {
 //     }
 // });
 
-// Schedule the task to run every 5 seconds
-cron.schedule('*/8 * * * *', async () => {
-    try {
-        const chains = await Chain.find({chainId: 10});
+// // // Indexing out of sync vaults' events every 10 seconds
+// // cron.schedule('*/10 * * * * *', async () => {
+// //     try {
+// //         const chains = await Chain.find({chainId: 10});
 
-        for (const chain of chains) {
-            await indexBlocks(chain.chainId);
-            await sleep(3000);
-        }
+// //         for (const chain of chains) {
+// //             await indexEvents(chain.chainId, false);
+// //             await sleep(3000);
+// //         }
+// //     } catch (error) {
+// //         console.error('Error in cron job:', error);
+// //     }
+// // });
+
+// // Schedule the task to run every 5 seconds
+// cron.schedule('*/8 * * * *', async () => {
+//     try {
+//         const chains = await Chain.find({chainId: 10});
+
+//         for (const chain of chains) {
+//             await indexBlocks(chain.chainId);
+//             await sleep(3000);
+//         }
         
-        await updateApiCache();
-    } catch (error) {
-        console.error('Error in cron job:', error);
-    }
-});
+//         await updateApiCache();
+//     } catch (error) {
+//         console.error('Error in cron job:', error);
+//     }
+// });
 
 
-//Processing saved events every 5mins
-cron.schedule('*/5 * * * *', async () => {
-    try {
-        const reset = false;
-        if (reset) {
-            console.log("resetting...");
-            const result = await BlockchainEvent.updateMany({}, { $unset: { processed: 1 } });
-            console.log("resetting done");
-        } else {
+// //Processing saved events every 5mins
+// cron.schedule('*/5 * * * *', async () => {
+//     try {
+//         const reset = false;
+//         if (reset) {
+//             console.log("resetting...");
+//             const result = await BlockchainEvent.updateMany({}, { $unset: { processed: 1 } });
+//             console.log("resetting done");
+//         } else {
 
-            const newEvents: IBlockchainEvent[] = await BlockchainEvent.find({processed: { $exists: false }})
-            .sort({ blockTimestamp: 1, logIndex: 1 })
-            .limit(300)
-            .exec();
+//             const newEvents: IBlockchainEvent[] = await BlockchainEvent.find({processed: { $exists: false }})
+//             .sort({ blockTimestamp: 1, logIndex: 1 })
+//             .limit(300)
+//             .exec();
 
-            console.log(`processing ${newEvents.length} new events...`, )
+//             console.log(`processing ${newEvents.length} new events...`, )
 
-            for (let index = 0; index < newEvents.length; index++) {
-                const event = newEvents[index];
+//             for (let index = 0; index < newEvents.length; index++) {
+//                 const event = newEvents[index];
 
-                if (event) {
-                    await eventMain(event);
-                }
-            }
+//                 if (event) {
+//                     await eventMain(event);
+//                 }
+//             }
 
-            if (newEvents?.length > 0) {
-                await updateApiCache();
-            }
-        }
-    } catch (error) {
-        console.error('Error in cron job:', error);
-    }
-});
+//             if (newEvents?.length > 0) {
+//                 await updateApiCache();
+//             }
+//         }
+//     } catch (error) {
+//         console.error('Error in cron job:', error);
+//     }
+// });
 
-// Schedule the task to run every 5 seconds - update tokens
-cron.schedule('*/20 * * * * *', async () => {
-    try {
-        updateTokenUSDValuesAndCache();
-    } catch (error) {
-        console.error('Error in cron job:', error);
-    }
-});
+// // Schedule the task to run every 5 seconds - update tokens
+// cron.schedule('*/20 * * * * *', async () => {
+//     try {
+//         updateTokenUSDValuesAndCache();
+//     } catch (error) {
+//         console.error('Error in cron job:', error);
+//     }
+// });
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
