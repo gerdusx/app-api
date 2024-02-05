@@ -8,7 +8,7 @@ import { fetchVaultsWithCache, fetchTokensWithCache, fetchArkiverDataWithCache, 
 import { indexBlocks, indexEvents, indexStrategies } from './indexer';
 import { BlockchainEvent, IBlockchainEvent } from './models/BlockchainEvent';
 import { eventMain } from './helpers/indexer/eventMain';
-import { balances, createVault, fetchChains, fetchVaults, granary, processEventsHandler, readVault, updateStrategies } from './helpers/routeHandlers';
+import { balances, createVault, fetchChains, fetchVaults, processEventsHandler, readVault, updateStrategies } from './helpers/routeHandlers';
 import { updateApiCache, updateTokenUSDValuesAndCache, updateTokensCache } from './helpers/cacheHelper';
 import Chain from './models/Chain';
 
@@ -37,9 +37,6 @@ app.get('/api/dto/tokens', fetchTokensWithCache);
 
 app.post('/api/vaults', createVault);
 app.post('/api/balances', balances);
-
-app.post('/api/granary', granary);
-
 
 
 app.post('/api/readvault', readVault);
