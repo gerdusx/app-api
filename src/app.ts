@@ -11,6 +11,7 @@ import { eventMain } from './helpers/indexer/eventMain';
 import { balances, createVault, fetchChains, fetchVaults, processEventsHandler, readVault, updateStrategies, updateStrategyUserReserveData } from './helpers/routeHandlers';
 import { updateApiCache, updateTokenUSDValuesAndCache, updateTokensCache } from './helpers/cacheHelper';
 import Chain from './models/Chain';
+import { fetchGrafanaTokens, fetchGrafanaVaults } from './helpers/grafana/grafana';
 
 // Connect to the database
 connectToDb();
@@ -45,6 +46,10 @@ app.get('/api/strategies/update', updateStrategies);
 app.post('/api/strategies/update/:strategyId/userreservedata', updateStrategyUserReserveData);
 
 app.get('/api/events/process', processEventsHandler);
+
+
+app.get('/api/grafana/vaults', fetchGrafanaVaults);
+app.get('/api/grafana/tokens', fetchGrafanaTokens);
 
 
 const sleep = (milliseconds: number) => {
