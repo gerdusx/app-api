@@ -10,7 +10,8 @@ export const getProviderByChain = (chainId: number) => {
             return new ethers.JsonRpcProvider(process.env.FANTOM_RPC_URL, 250);
         case 42161:
             return new ethers.JsonRpcProvider(process.env.ARBITRUM_RPC_URL, 42161);
-
+        case 5000:
+            return new ethers.JsonRpcProvider(process.env.MANTLE_RPC_URL, 5000); 
         default:
             return null
     }

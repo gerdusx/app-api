@@ -6,6 +6,7 @@ export interface IChain {
     chainId: number;
     etherscanUrl: string;
     name?: string;
+    active: boolean;
     last30SnapShots?: { timestamp: number; tvl: number; totalUsers: number }[];
     lastSnapShotDelta?: {
         tvl?: ISnapshot_Delta;
@@ -16,7 +17,8 @@ export interface IChain {
 const chainSchema = new mongoose.Schema({
     chainId: Number,
     name: String,
-    etherscanUrl: String
+    etherscanUrl: String,
+    active: Boolean
 });
 
 const Chain = mongoose.model<IChain>('Chain', chainSchema);

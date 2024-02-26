@@ -36,55 +36,60 @@ export const indexEvents = async (chainId: number, inSync: boolean) => {
                 endBlock = currentBlock
             }
 
-            const eventsToSave: any[] = [];
-            await Promise.all(vaultAddresses.map(async vaultAddress => {
-
-                const rawLogs = await provider.getLogs({
-                    address: vaultAddress,
-                    fromBlock: startBlock,
-                    toBlock: endBlock
-                });
-
-                for (let logIndex = 0; logIndex < rawLogs.length; logIndex++) {
-
-                    const log: any = rawLogs[logIndex];
-                    let parsedLog = contractInterface.parseLog(log);
-                    const blockTimestamp = (await provider.getBlock(log.blockNumber))?.timestamp;
-                    if (parsedLog) {
-                        eventsToSave.push({
-                            blockNumber: log.blockNumber,
-                            transactionHash: log.transactionHash,
-                            blockTimestamp: blockTimestamp,
-                            logIndex,
-                            chainId,
-                            contractAddress: log.address,
-                            eventName: parsedLog.name,
-                            eventSignature: parsedLog.signature,
-                            eventParameters: parsedLog.args,
-                            eventParametersString: parsedLog.args.map(x => x.toString()).join(",")
-                        });
+            if (vaultAddresses.length > 0) {
+                const eventsToSave: any[] = [];
+                await Promise.all(vaultAddresses.map(async vaultAddress => {
+    
+                    const rawLogs = await provider.getLogs({
+                        address: vaultAddress,
+                        fromBlock: startBlock,
+                        toBlock: endBlock
+                    });
+    
+                    for (let logIndex = 0; logIndex < rawLogs.length; logIndex++) {
+    
+                        const log: any = rawLogs[logIndex];
+                        let parsedLog = contractInterface.parseLog(log);
+                        const blockTimestamp = (await provider.getBlock(log.blockNumber))?.timestamp;
+                        if (parsedLog) {
+                            eventsToSave.push({
+                                blockNumber: log.blockNumber,
+                                transactionHash: log.transactionHash,
+                                blockTimestamp: blockTimestamp,
+                                logIndex,
+                                chainId,
+                                contractAddress: log.address,
+                                eventName: parsedLog.name,
+                                eventSignature: parsedLog.signature,
+                                eventParameters: parsedLog.args,
+                                eventParametersString: parsedLog.args.map(x => x.toString()).join(",")
+                            });
+                        }
                     }
+                }));
+    
+                // // Filter out events that are already in the database
+                const cachedEvents = await fetchBlockChainEventsWithCache();
+                const uniqueEventsToSave = eventsToSave.filter(event => !cachedEvents.some(
+                    cachedEvent => cachedEvent.chainId === chainId &&
+                        cachedEvent.transactionHash === event.transactionHash &&
+                        cachedEvent.eventName === event.eventName &&
+                        cachedEvent.eventParametersString === event.eventParametersString
+                ));
+    
+                // // Save unique events in bulk
+                if (uniqueEventsToSave.length > 0) {
+                    await BlockchainEvent.insertMany(uniqueEventsToSave);
+                    addBlockChainEventsToCache(uniqueEventsToSave);
                 }
-            }));
-
-            // // Filter out events that are already in the database
-            const cachedEvents = await fetchBlockChainEventsWithCache();
-            const uniqueEventsToSave = eventsToSave.filter(event => !cachedEvents.some(
-                cachedEvent => cachedEvent.chainId === chainId &&
-                    cachedEvent.transactionHash === event.transactionHash &&
-                    cachedEvent.eventName === event.eventName &&
-                    cachedEvent.eventParametersString === event.eventParametersString
-            ));
-
-            // // Save unique events in bulk
-            if (uniqueEventsToSave.length > 0) {
-                await BlockchainEvent.insertMany(uniqueEventsToSave);
-                addBlockChainEventsToCache(uniqueEventsToSave);
+    
+                await updateLatestProcessedBlock(chainId, endBlock, inSync ? "event" : "event-outSync");
+    
+                console.log(`${inSync ? "event" : "event-outSync"} - chain: ${chainId} - ${startBlock} to ${endBlock} - new events: ${eventsToSave.length}, unique events: ${uniqueEventsToSave.length} - cached events: ${cachedEvents.length} (#blocks: ${endBlock - startBlock})`)
+            } else {
+                console.log(`${inSync ? "event" : "event-outSync"} - chain: ${chainId} - no vaults found`)
             }
-
-            await updateLatestProcessedBlock(chainId, endBlock, inSync ? "event" : "event-outSync");
-
-            console.log(`${inSync ? "event" : "event-outSync"} - chain: ${chainId} - ${startBlock} to ${endBlock} - new events: ${eventsToSave.length}, unique events: ${uniqueEventsToSave.length} - cached events: ${cachedEvents.length} (#blocks: ${endBlock - startBlock})`)
+            
         } else {
             console.log("No provider found")
         }
