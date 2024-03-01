@@ -59,7 +59,7 @@ const sleep = (milliseconds: number) => {
 // Indexing events every 10 seconds
 cron.schedule('*/6 * * * *', async () => {
     try {
-        const chains = await Chain.find({chainId: 10});
+        const chains = await Chain.find({active: true});
 
         for (const chain of chains) {
             await indexEvents(chain.chainId, true);
@@ -84,10 +84,11 @@ cron.schedule('*/6 * * * *', async () => {
 //     }
 // });
 
+
 // Schedule the task to run every 5 seconds
 cron.schedule('*/8 * * * *', async () => {
     try {
-        const chains = await Chain.find({chainId: 10});
+        const chains = await Chain.find({active: true});
 
         for (const chain of chains) {
             await indexBlocks(chain.chainId);
@@ -136,7 +137,7 @@ cron.schedule('*/5 * * * *', async () => {
 });
 
 // Schedule the task to run every 5 seconds - update tokens
-cron.schedule('*/20 * * * * *', async () => {
+cron.schedule('*/20 * * * *', async () => {
     try {
         updateTokenUSDValuesAndCache();
     } catch (error) {

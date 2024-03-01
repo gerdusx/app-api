@@ -110,88 +110,85 @@ export const indexBlocks = async (chainId: number) => {
         if (provider) {
             const vaults = (await fetchVaultsFromCacheOrDb()).filter(x => x.chainId === chainId);
             const vaultAddresses = vaults.filter(x => x.chainId === chainId && x.inSync).map(vault => vault.address.toLowerCase());
-            const processedBlock = await getLatestProcessedBlock(chainId, "block");
 
-            const startBlock = processedBlock.latestBlock;
+            if (vaultAddresses?.length > 0) {
+                const processedBlock = await getLatestProcessedBlock(chainId, "block");
+                const startBlock = processedBlock.latestBlock;
 
-            const currentBlock = await provider.getBlockNumber();
-            const blocksToCurrentBlock = currentBlock - startBlock;
+                const currentBlock = await provider.getBlockNumber();
+                const blocksToCurrentBlock = currentBlock - startBlock;
 
-            const blocksToFetch = blocksToCurrentBlock < processedBlock.blocksToFetch ? blocksToCurrentBlock : processedBlock.blocksToFetch;
+                const blocksToFetch = blocksToCurrentBlock < processedBlock.blocksToFetch ? blocksToCurrentBlock : processedBlock.blocksToFetch;
 
-            // const endBlock = blocksToCurrentBlock < nextBlock.blocksToFetch ? startBlock + blocksToCurrentBlock : startBlock + nextBlock.blocksToFetch
+                const blocksToIndex = getBlocksToFetch(startBlock, blocksToFetch, processedBlock.blockInterval, currentBlock);
 
-            const blocksToIndex = getBlocksToFetch(startBlock, blocksToFetch, processedBlock.blockInterval, currentBlock);
+                if (blocksToIndex?.length > 0) {
+                    await Promise.all(vaultAddresses.map(async vaultAddress => {
+                        for (const blockNumber of blocksToIndex) {
 
-            // console.log("blocksToIndex", blocksToIndex)
+                            const block = await provider.getBlock(blockNumber);
 
-            if (blocksToIndex?.length > 0) {
-                await Promise.all(vaultAddresses.map(async vaultAddress => {
-                    for (const blockNumber of blocksToIndex) {
+                            const now = Number(block?.timestamp);
+                            const nowDay = nearestDay(Number(now));
 
-                        const block = await provider.getBlock(blockNumber);
+                            const contract = new ethers.Contract(vaultAddress, VAULT_V2_ABI, provider);
 
-                        const now = Number(block?.timestamp);
-                        const nowDay = nearestDay(Number(now));
+                            const [totalIdle, totalAllocated, getPricePerFullShare, totalSupply, totalAllocBPS, tvlCap] = await Promise.all([
+                                contract.totalIdle({ blockTag: blockNumber }),
+                                contract.totalAllocated({ blockTag: blockNumber }),
+                                contract.getPricePerFullShare({ blockTag: blockNumber }),
+                                contract.totalSupply({ blockTag: blockNumber }),
+                                contract.totalAllocBPS({ blockTag: blockNumber }),
+                                contract.tvlCap({ blockTag: blockNumber }),
+                            ])
 
-                        const contract = new ethers.Contract(vaultAddress, VAULT_V2_ABI, provider);
-
-                        const [totalIdle, totalAllocated, getPricePerFullShare, totalSupply, totalAllocBPS, tvlCap] = await Promise.all([
-                            contract.totalIdle({ blockTag: blockNumber }),
-                            contract.totalAllocated({ blockTag: blockNumber }),
-                            contract.getPricePerFullShare({ blockTag: blockNumber }),
-                            contract.totalSupply({ blockTag: blockNumber }),
-                            contract.totalAllocBPS({ blockTag: blockNumber }),
-                            contract.tvlCap({ blockTag: blockNumber }),
-                        ])
-
-                        const currentSnapshot = await VaultSnapshot.findOne({
-                            timestamp: nowDay,
-                            vaultAddress: vaultAddress.toLowerCase(),
-                            chainId
-                        });
-
-                        if (!currentSnapshot) {
-                            // Create a new snapshot
-                            const newSnapshot = new VaultSnapshot({
+                            const currentSnapshot = await VaultSnapshot.findOne({
                                 timestamp: nowDay,
-                                lastBlockTimestamp: now,
                                 vaultAddress: vaultAddress.toLowerCase(),
-                                totalIdle: totalIdle.toString(),
-                                totalAllocated: totalAllocated.toString(),
-                                chainId: chainId,
-                                pricePerFullShare: getPricePerFullShare.toString(),
-                                totalSupply: totalSupply.toString(),
-                                totalAllocBPS: totalAllocBPS.toString(),
-                                tvlCap: tvlCap.toString(),
+                                chainId
                             });
 
-                            await newSnapshot.save();
-                        } else {
-                            // Update existing snapshot
-                            currentSnapshot.lastBlockTimestamp = now;
-                            currentSnapshot.totalIdle = totalIdle.toString();
-                            currentSnapshot.totalAllocated = totalAllocated.toString();
-                            currentSnapshot.pricePerFullShare = getPricePerFullShare.toString();
-                            currentSnapshot.totalSupply = totalSupply.toString();
-                            currentSnapshot.totalAllocBPS = totalAllocBPS.toString();
-                            currentSnapshot.tvlCap = tvlCap.toString();
+                            if (!currentSnapshot) {
+                                // Create a new snapshot
+                                const newSnapshot = new VaultSnapshot({
+                                    timestamp: nowDay,
+                                    lastBlockTimestamp: now,
+                                    vaultAddress: vaultAddress.toLowerCase(),
+                                    totalIdle: totalIdle.toString(),
+                                    totalAllocated: totalAllocated.toString(),
+                                    chainId: chainId,
+                                    pricePerFullShare: getPricePerFullShare.toString(),
+                                    totalSupply: totalSupply.toString(),
+                                    totalAllocBPS: totalAllocBPS.toString(),
+                                    tvlCap: tvlCap.toString(),
+                                });
 
-                            await currentSnapshot.save();
+                                await newSnapshot.save();
+                            } else {
+                                // Update existing snapshot
+                                currentSnapshot.lastBlockTimestamp = now;
+                                currentSnapshot.totalIdle = totalIdle.toString();
+                                currentSnapshot.totalAllocated = totalAllocated.toString();
+                                currentSnapshot.pricePerFullShare = getPricePerFullShare.toString();
+                                currentSnapshot.totalSupply = totalSupply.toString();
+                                currentSnapshot.totalAllocBPS = totalAllocBPS.toString();
+                                currentSnapshot.tvlCap = tvlCap.toString();
+
+                                await currentSnapshot.save();
+                            }
                         }
-                    }
-                }));
+                    }));
 
-                console.log(`chain ${chainId} - Blocks indexed: ${blocksToIndex[0]} to ${blocksToIndex[blocksToIndex.length - 1]} - blocks indexed - ${blocksToIndex}`);
+                    console.log(`chain ${chainId} - Blocks indexed: ${blocksToIndex[0]} to ${blocksToIndex[blocksToIndex.length - 1]} - blocks indexed - ${blocksToIndex}`);
 
-                await updateLatestProcessedBlock(chainId, blocksToIndex[blocksToIndex.length - 1], "block");
+                    await updateLatestProcessedBlock(chainId, blocksToIndex[blocksToIndex.length - 1], "block");
 
+                } else {
+                    console.log(`chain ${chainId} - No blocks to index - current block - ${currentBlock} - next block - ${processedBlock.latestBlock + processedBlock.blocksToFetch}`)
+                }
             } else {
-                console.log(`chain ${chainId} - No blocks to index - current block - ${currentBlock} - next block - ${processedBlock.latestBlock + processedBlock.blocksToFetch}`)
+                console.log(`chain ${chainId} - No vaults found`)
             }
-
-
-
         }
     } catch (error: any) {
         if (error.error?.code === 429) {
